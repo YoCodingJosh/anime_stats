@@ -1,0 +1,25 @@
+{
+  "name": "anime_stats",
+  "version": "1.0.0",
+  "description": "Advanced statistics for MyAnimeList",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YoCodingJosh/anime_stats.git"
+  },
+  "author": "CodingJosh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/YoCodingJosh/anime_stats/issues"
+  },
+  "homepage": "https://github.com/YoCodingJosh/anime_stats#readme",
+  "dependencies": {
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.6"
+  }
+}

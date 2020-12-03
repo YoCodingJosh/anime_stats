@@ -3,6 +3,8 @@ var router = express.Router();
 
 const crypto = require('crypto');
 
+const secrets = require('./secrets');
+
 // middleware that is specific to this router
 router.use(function timeLog (req, res, next) {
   console.log('Time: ', Date.now());
@@ -15,12 +17,17 @@ router.get('/', function (req, res) {
 });
 
 // Generates a code challenge and code verifier for authentication
-router.get('/pkce', function(req, res) {
+router.post('/start-auth', function(req, res) {
   const buf = Buffer.alloc(256);
   const longRandomString = crypto.randomFillSync(buf).toString('hex');
   const chunk = longRandomString.substring(Math.random * longRandomString.length - 129, 128);
 
-  res.send(chunk);
+  let data = {
+    pkceChunk: chunk,
+    clientId: secrets.client_id
+  };
+
+  res.send(data);
 });
 
 // define the about route

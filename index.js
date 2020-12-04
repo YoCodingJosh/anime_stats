@@ -18,6 +18,11 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
+// Main app page
+app.get('/main', (req, res) => {
+  res.render('main');
+});
+
 // API router
 app.use('/api', api)
 

@@ -9,10 +9,13 @@ function getAuthUrl() {
 }
 
 function startAuth() {
+  $("#loginButton").text("Loading...");
+  $("#loginButton").prop("disabled", true);
+
   $.ajax("/api/start-auth", {
     method: "POST"
   }).done(function(data) {
-    window.localStorage.setItem("pkce", data.pkceChunk);
+    window.localStorage.setItem("pkce", data.pkce);
     window.localStorage.setItem("clientId", data.clientId);
 
     let malAuthUrl = getAuthUrl();

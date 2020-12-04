@@ -1,0 +1,14 @@
+<%- include("header.ejs") %>
+<div id="content" class="container">
+  <h1><%= errorData.title %></h1>
+  <p><%= errorData.message %></p>
+  <small>HTTP <%= errorData.httpCode %></small>
+  <br/>
+  <button type="button" id="retryButton" class="btn btn-secondary btn-lg">Go Back Home</button>
+</div>
+<script>
+  $("#retryButton").click(function() {
+    window.location.href = "/";
+  });
+</script>
+<%- include("footer.ejs") %>

@@ -1,0 +1,11 @@
+<%- include("header.ejs") %>
+<div id="content" class="container">
+  <h1>Starting application...</h1>
+</div>
+<script>
+  $(document).ready(function() {
+    window.localStorage.setItem("code", "<%= code %>");
+    window.location.href = "/main";
+  });
+</script>
+<%- include("footer.ejs") %>

@@ -5,6 +5,8 @@ const crypto = require('crypto');
 
 const secrets = require('./secrets');
 
+const {dictionary} = require('./data.json');
+
 // middleware that is specific to this router
 router.use(function timeLog (req, res, next) {
   console.log('Time: ', Date.now());
@@ -16,14 +18,37 @@ router.get('/', function (req, res) {
   res.send('Birds home page');
 });
 
+function buildPKCE() {
+  const buf = Buffer.alloc(64);
+
+  return crypto.randomFillSync(buf).toString('hex');
+}
+
+function buildState() {
+  let word = dictionary[Math.floor(Math.random() * dictionary.length)];
+
+  let randomDigit = function() {
+    return Math.floor(Math.random() * 10);
+  };
+
+  let randomLetter = function() {
+    let dict = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmopqrstuvwxyz";
+
+    return dict.charAt(Math.floor(Math.random() * dict.length));
+  }
+
+  return `${word}-${randomDigit()}${randomDigit()}${randomDigit()}${randomLetter()}${randomDigit()}${randomLetter()}${randomLetter()}`;
+}
+
 // Generates a code challenge and code verifier for authentication
 router.post('/start-auth', function(req, res) {
-  const buf = Buffer.alloc(64);
-  const longRandomString = crypto.randomFillSync(buf).toString('hex');
+
+  console.log("Dictionary length: " + dictionary.length);
 
   let data = {
-    pkce: longRandomString,
-    clientId: secrets.client_id
+    pkce: buildPKCE(),
+    clientId: secrets.client_id,
+    state: buildState()
   };
 
   res.send(data);
@@ -60,9 +85,28 @@ router.get("/redirect", function(req, res) {
     res.status(errorData.httpCode);
 
     res.render("auth_error.ejs", {errorData});
+
+    return;
+  }
+
+  // If we don't get a code, then we reject the request and say 400.
+  if (req.query.code === undefined || req.query.code === null) {
+    let errorData = {
+      message: "The request from MyAnimeList was invalid, please retry authorization.",
+      title: "Bad Request",
+      httpCode: 400
+    };
+
+    res.status(errorData.httpCode);
+
+    res.render("auth_error.ejs", {errorData});
+
+    return;
   }
 
   res.render("auth_complete.ejs", {code: req.query.code});
+
+  return;
 });
 
 // define the about route

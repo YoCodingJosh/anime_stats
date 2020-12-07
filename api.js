@@ -13,11 +13,6 @@ router.use(function timeLog (req, res, next) {
   next();
 });
 
-// define the home page route
-router.get('/', function (req, res) {
-  res.send('Birds home page');
-});
-
 function buildPKCE() {
   const buf = Buffer.alloc(64);
 
@@ -37,19 +32,25 @@ function buildState() {
     return dict.charAt(Math.floor(Math.random() * dict.length));
   }
 
-  return `${word}-${randomDigit()}${randomDigit()}${randomDigit()}${randomLetter()}${randomDigit()}${randomLetter()}${randomLetter()}`;
+  let randomLetterOrDigit = function() {
+    let dict = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmopqrstuvwxyz0123456789";
+
+    return dict.charAt(Math.floor(Math.random() * dict.length));
+  }
+
+  return `${word}-${randomDigit()}${randomDigit()}${randomDigit()}${randomLetter()}${randomDigit()}${randomLetter()}${randomLetterOrDigit()}`;
 }
 
 // Generates a code challenge and code verifier for authentication
 router.post('/start-auth', function(req, res) {
-
-  console.log("Dictionary length: " + dictionary.length);
-
   let data = {
     pkce: buildPKCE(),
     clientId: secrets.client_id,
     state: buildState()
   };
+
+  req.session.pkce = data.pkce;
+  req.session.state = data.state;
 
   res.send(data);
 });
@@ -76,15 +77,16 @@ router.get("/redirect", function(req, res) {
     }
 
     errorData.message = req.query.message;
+    errorData.state = req.query.state;
 
     // Interpolate the hint into the error message.
     if (req.query.hint !== undefined && req.query.hint !== null) {
       errorData.message = `${errorData.message} Hint: ${req.query.hint}`;
     }
 
-    res.status(errorData.httpCode);
+    req.session.errorData = errorData;
 
-    res.render("auth_error.ejs", {errorData});
+    res.redirect("/auth-error");
 
     return;
   }
@@ -94,24 +96,22 @@ router.get("/redirect", function(req, res) {
     let errorData = {
       message: "The request from MyAnimeList was invalid, please retry authorization.",
       title: "Bad Request",
-      httpCode: 400
+      httpCode: 400,
+      state: req.query.state
     };
 
-    res.status(errorData.httpCode);
+    req.session.errorData = errorData;
 
-    res.render("auth_error.ejs", {errorData});
+    res.redirect("/auth-error");
 
     return;
   }
 
-  res.render("auth_complete.ejs", {code: req.query.code});
+  req.session.code = req.query.code;
+
+  res.redirect("/main");
 
   return;
-});
-
-// define the about route
-router.get('/about', function (req, res) {
-  res.send('About birds');
 });
 
 module.exports = router;

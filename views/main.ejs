@@ -2,5 +2,10 @@
 <div id="content" class="container">
   <h1>Hello World!</h1>
 </div>
+<script>
+  $(document).ready(function() {
+    window.localStorage.setItem("code", "<%= code %>");
+  });
+</script>
 <script src="/static/js/app/main.js"></script>
 <%- include("footer.ejs") %>

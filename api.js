@@ -55,7 +55,6 @@ router.post('/start-auth', function(req, res) {
   res.send(data);
 });
 
-// This really should be a POST, but oh well. C'mon MAL.
 router.get("/redirect", function(req, res) {
   console.log(req);
 
@@ -86,7 +85,7 @@ router.get("/redirect", function(req, res) {
 
     req.session.errorData = errorData;
 
-    res.redirect("/auth-error");
+    res.redirect(303, "/auth-error");
 
     return;
   }
@@ -102,14 +101,14 @@ router.get("/redirect", function(req, res) {
 
     req.session.errorData = errorData;
 
-    res.redirect("/auth-error");
+    res.redirect(303, "/auth-error");
 
     return;
   }
 
   req.session.code = req.query.code;
 
-  res.redirect("/main");
+  res.redirect(302, "/main");
 
   return;
 });

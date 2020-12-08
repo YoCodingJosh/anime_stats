@@ -66,7 +66,7 @@ app.get('/main', (req, res) => {
       state: "NULL"
     };
 
-    res.redirect("/auth-error");
+    res.redirect(303, "/auth-error");
 
     return;
   }

@@ -58,12 +58,12 @@ app.get('/', (req, res) => {
 
 // Main app page
 app.get('/main', (req, res) => {
-  if (req.session.code === undefined) {
+  if (req.session.tokenData === undefined) {
     req.session.errorData = {
       title: "Bad Request",
       httpCode: 400,
       message: "The request was malformed.",
-      state: "NULL"
+      state: req.session.state === undefined ? "NULL": req.session.state
     };
 
     res.redirect(303, "/auth-error");
@@ -71,7 +71,7 @@ app.get('/main', (req, res) => {
     return;
   }
 
-  res.render('main.ejs', {code: req.session.code});
+  res.render('main.ejs', {tokenData: req.session.tokenData});
 });
 
 // API router

@@ -5,10 +5,13 @@ const crypto = require('crypto');
 
 const secrets = require('./secrets');
 
-const {dictionary} = require('./data.json');
+const { dictionary } = require('./data.json');
+
+const axios = require('axios').default;
+const qs = require('qs');
 
 // middleware that is specific to this router
-router.use(function timeLog (req, res, next) {
+router.use(function timeLog(req, res, next) {
   console.log('Time: ', Date.now());
   next();
 });
@@ -22,17 +25,17 @@ function buildPKCE() {
 function buildState() {
   let word = dictionary[Math.floor(Math.random() * dictionary.length)];
 
-  let randomDigit = function() {
+  let randomDigit = function () {
     return Math.floor(Math.random() * 10);
   };
 
-  let randomLetter = function() {
+  let randomLetter = function () {
     let dict = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmopqrstuvwxyz";
 
     return dict.charAt(Math.floor(Math.random() * dict.length));
   }
 
-  let randomLetterOrDigit = function() {
+  let randomLetterOrDigit = function () {
     let dict = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmopqrstuvwxyz0123456789";
 
     return dict.charAt(Math.floor(Math.random() * dict.length));
@@ -42,7 +45,7 @@ function buildState() {
 }
 
 // Generates a code challenge and code verifier for authentication
-router.post('/start-auth', function(req, res) {
+router.post('/start-auth', function (req, res) {
   let data = {
     pkce: buildPKCE(),
     clientId: secrets.client_id,
@@ -55,9 +58,7 @@ router.post('/start-auth', function(req, res) {
   res.send(data);
 });
 
-router.get("/redirect", function(req, res) {
-  console.log(req);
-
+router.get("/redirect", function (req, res) {
   // If we get an error, display it to the user.
   if (req.query.error !== undefined && req.query.error !== null) {
     let errorData = {
@@ -106,11 +107,30 @@ router.get("/redirect", function(req, res) {
     return;
   }
 
-  req.session.code = req.query.code;
+  // Turn auth code into tokens
+  let tokenUrl = "https://myanimelist.net/v1/oauth2/token";
 
-  res.redirect(302, "/main");
+  axios({
+    method: "POST",
+    url: tokenUrl,
+    data: qs.stringify({
+      client_id: secrets.client_id,
+      client_secret: secrets.client_secret,
+      grant_type: "authorization_code",
+      code: req.query.code,
+      redirect_uri: `${secrets.application_url}/api/redirect`,
+      code_verifier: req.session.pkce,
+    }),
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded'
+    }
+  }).then(function (response) {
+    req.session.tokenData = response.data;
 
-  return;
+    res.redirect(302, "/main");
+
+    return;
+  });
 });
 
 module.exports = router;

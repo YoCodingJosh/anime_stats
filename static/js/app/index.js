@@ -1,6 +1,6 @@
-function getAuthUrl() {
-  var challenge = window.localStorage.getItem("pkce");
-  var clientId = window.localStorage.getItem("clientId");
+function getAuthUrl(pkce, clientId) {
+  var challenge = pkce;
+  var clientId = clientId;
   var state = window.localStorage.getItem("state");
   var redirect = `${window.location.protocol}//${window.location.host}/api/redirect`;
 
@@ -14,11 +14,9 @@ function startAuth() {
   $.ajax("/api/start-auth", {
     method: "POST"
   }).done(function(data) {
-    window.localStorage.setItem("pkce", data.pkce);
-    window.localStorage.setItem("clientId", data.clientId);
     window.localStorage.setItem("state", data.state);
 
-    let malAuthUrl = getAuthUrl();
+    let malAuthUrl = getAuthUrl(data.pkce, data.clientId);
     window.location.href = malAuthUrl;
   });
 }

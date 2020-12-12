@@ -93,5 +93,6 @@ app.get('/auth-error', (req, res) => {
 
 // Let 'er rip!
 app.listen(APP_PORT, () => {
+  console.log(`Running in ${process.env.NODE_ENV} mode`);
   console.log(`Server started on port ${APP_PORT}`);
 });

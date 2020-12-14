@@ -9,6 +9,11 @@
   <button type="button" id="retryButton" class="btn btn-secondary btn-lg">Go Back Home</button>
 </div>
 <script>
+  $(document).ready(function() {
+    // Clear local storage to remove old session.
+    window.localStorage.clear();
+  });
+
   $("#retryButton").click(function() {
     window.location.href = "/";
   });

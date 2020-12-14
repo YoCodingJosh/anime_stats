@@ -4,10 +4,6 @@
 </div>
 <script>
   $(document).ready(function () {
-    var tokenData = JSON.parse(`<%- JSON.stringify(tokenData) %>`);
-    for (const property in tokenData) {
-      window.localStorage.setItem(`${property}`, `${tokenData[property]}`);
-    }
   });
 </script>
 <script src="/static/js/app/main.js"></script>

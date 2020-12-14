@@ -4,12 +4,18 @@ const app = express();
 
 var api = require('./api');
 
+const bodyParser = require('body-parser');
+
 const sqlite3 = require('sqlite3');
 const session = require('express-session');
 const sqliteFactory = require('express-session-sqlite');
 
 // Elastic Beanstalk assumes that Node.js apps run on port 3000.
 const APP_PORT = 3000;
+
+// Parse URL-Encoded and JSON POST bodies
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // Install EJS as the view engine.
 app.set("view engine", "ejs");
@@ -40,7 +46,7 @@ var sess = {
     prefix: 'muda:',
     // (optional) Adjusts the cleanup timer in milliseconds for deleting expired session rows.
     // Default is 5 minutes.
-    cleanupInterval: 600000, // 10 minutes
+    cleanupInterval: 600000, // 600000 ms = 10 minutes
   }),
 }
 
@@ -60,9 +66,9 @@ app.get('/', (req, res) => {
 app.get('/main', (req, res) => {
   if (req.session.tokenData === undefined) {
     req.session.errorData = {
-      title: "Bad Request",
-      httpCode: 400,
-      message: "The request was malformed.",
+      title: "Unauthorized",
+      httpCode: 401,
+      message: "You need to login before performing this action.",
       state: req.session.state === undefined ? "NULL": req.session.state
     };
 
@@ -71,7 +77,7 @@ app.get('/main', (req, res) => {
     return;
   }
 
-  res.render('main.ejs', {tokenData: req.session.tokenData});
+  res.render('main.ejs');
 });
 
 // API router
@@ -88,7 +94,14 @@ app.get('/auth-error', (req, res) => {
     }
   }
 
-  res.render("auth_error.ejs", {errorData: req.session.errorData});
+  var errorData = req.session.errorData;
+
+  // Destroy the session, and then render the error page.
+  req.session.destroy(function () {
+    res.status(errorData.httpCode);
+
+    res.render("auth_error.ejs", {errorData: errorData});
+  })
 });
 
 // Let 'er rip!

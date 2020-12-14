@@ -12,12 +12,22 @@ function startAuth() {
   $("#loginButton").prop("disabled", true);
 
   $.ajax("/api/start-auth", {
-    method: "POST"
+    method: "POST",
+    data: {
+      session: window.localStorage.getItem("session"),
+      state: window.localStorage.getItem("state")
+    }
   }).done(function(data) {
-    window.localStorage.setItem("state", data.state);
-
-    let malAuthUrl = getAuthUrl(data.pkce, data.clientId);
-    window.location.href = malAuthUrl;
+    if (!data.weGood) {
+      window.localStorage.setItem("state", data.state);
+      window.localStorage.setItem("session", data.sessionId);
+  
+      let malAuthUrl = getAuthUrl(data.pkce, data.clientId);
+      window.location.href = malAuthUrl;
+    } else {
+      // Since we have an existing session that's valid, just go to the app.
+      window.location.href = "/main";
+    }
   });
 }
 

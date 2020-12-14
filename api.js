@@ -41,15 +41,46 @@ function buildState() {
     return dict.charAt(Math.floor(Math.random() * dict.length));
   }
 
-  return `${word}-${randomDigit()}${randomDigit()}${randomDigit()}${randomLetter()}${randomDigit()}${randomLetter()}${randomLetterOrDigit()}`;
+  let randomSpecialCharacter = function() {
+    let dict = "&$!#?.+%=";
+
+    return dict.charAt(Math.floor(Math.random() * dict.length));
+  }
+
+  let randomCharacter = function() {
+    let dict = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmopqrstuvwxyz0123456789&$!#?.+%=";
+
+    return dict.charAt(Math.floor(Math.random() * dict.length));
+  }
+
+  // # of possible states = 3.5780442048E15
+  // thats about 3.5 quadrillion
+  // there's only 7.8 billion people on earth. :)
+  return `${word}-${randomDigit()}${randomDigit()}${randomDigit()}${randomLetter()}${randomDigit()}${randomLetter()}${randomLetterOrDigit()}${randomDigit()}${randomCharacter()}${randomSpecialCharacter()}`;
 }
 
 // Generates a code challenge and code verifier for authentication
 router.post('/start-auth', function (req, res) {
+  // If we already auth with MAL, then we may still have a valid session.
+  // if we have a valid session, then "we good".
+  let weGood = req.body.session !== '' && req.body.state !== '';
+
+  // So far, we good. But we have to verify that the session hasn't expired and the state is valid.
+  if (weGood) {
+    weGood = req.body.session === req.sessionID && req.session.state === req.session.state;
+
+    if (weGood) {
+      // So we validated the session, so now let's see if this session has a valid authorization.
+      weGood = req.session.tokenData !== undefined && req.session.tokenData.expirationDate > Date.now();
+    }
+  }
+
   let data = {
     pkce: buildPKCE(),
     clientId: secrets.client_id,
-    state: buildState()
+    state: buildState(),
+    sessionId: req.sessionID,
+    weGood
   };
 
   req.session.pkce = data.pkce;
@@ -126,6 +157,8 @@ router.get("/redirect", function (req, res) {
     }
   }).then(function (response) {
     req.session.tokenData = response.data;
+
+    req.session.tokenData.expirationDate = Date.now() + req.session.tokenData.expires_in;
 
     res.redirect(302, "/main");
 

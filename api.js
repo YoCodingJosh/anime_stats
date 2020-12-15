@@ -16,51 +16,7 @@ router.use(function timeLog(req, res, next) {
   next();
 });
 
-function buildPKCE() {
-  const buf = Buffer.alloc(64);
-
-  return crypto.randomFillSync(buf).toString('hex');
-}
-
-function buildState() {
-  let word = dictionary[Math.floor(Math.random() * dictionary.length)];
-
-  let randomDigit = function () {
-    return Math.floor(Math.random() * 10);
-  };
-
-  let randomLetter = function () {
-    let dict = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmopqrstuvwxyz";
-
-    return dict.charAt(Math.floor(Math.random() * dict.length));
-  }
-
-  let randomLetterOrDigit = function () {
-    let dict = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmopqrstuvwxyz0123456789";
-
-    return dict.charAt(Math.floor(Math.random() * dict.length));
-  }
-
-  let randomSpecialCharacter = function() {
-    let dict = "&$!#?.+%=";
-
-    return dict.charAt(Math.floor(Math.random() * dict.length));
-  }
-
-  let randomCharacter = function() {
-    let dict = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmopqrstuvwxyz0123456789&$!#?.+%=";
-
-    return dict.charAt(Math.floor(Math.random() * dict.length));
-  }
-
-  // # of possible states = 3.5780442048E15
-  // thats about 3.5 quadrillion
-  // there's only 7.8 billion people on earth. :)
-  return `${word}-${randomDigit()}${randomDigit()}${randomDigit()}${randomLetter()}${randomDigit()}${randomLetter()}${randomLetterOrDigit()}${randomDigit()}${randomCharacter()}${randomSpecialCharacter()}`;
-}
-
-// Generates a code challenge and code verifier for authentication
-router.post('/start-auth', function (req, res) {
+function checkAuth(req) {
   // If we already auth with MAL, then we may still have a valid session.
   // if we have a valid session, then "we good".
   let weGood = req.body.session !== '' && req.body.state !== '';
@@ -73,6 +29,65 @@ router.post('/start-auth', function (req, res) {
       // So we validated the session, so now let's see if this session has a valid authorization.
       weGood = req.session.tokenData !== undefined && req.session.tokenData.expirationDate > Date.now();
     }
+  }
+
+  return weGood;
+}
+
+function buildPKCE() {
+  const buf = Buffer.alloc(64);
+
+  return crypto.randomFillSync(buf).toString('hex');
+}
+
+function buildState() {
+  var word = dictionary[Math.floor(Math.random() * dictionary.length)];
+
+  let randomDigit = function () {
+    return Math.floor(Math.random() * 10);
+  };
+
+  let randomLetter = function () {
+    var dict = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmopqrstuvwxyz";
+
+    return dict.charAt(Math.floor(Math.random() * dict.length));
+  }
+
+  let randomLetterOrDigit = function () {
+    var dict = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmopqrstuvwxyz0123456789";
+
+    return dict.charAt(Math.floor(Math.random() * dict.length));
+  }
+
+  let randomSpecialCharacter = function () {
+    var dict = "&$!#?.+%=";
+
+    return dict.charAt(Math.floor(Math.random() * dict.length));
+  }
+
+  let randomCharacter = function () {
+    var dict = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmopqrstuvwxyz0123456789&$!#?.+%=";
+
+    return dict.charAt(Math.floor(Math.random() * dict.length));
+  }
+
+  // # of possible states = 3.6744585696E15
+  // thats about 3.6 quadrillion
+  // there's only 7.8 billion people on earth. :)
+  return `${word}-${randomDigit()}${randomDigit()}${randomDigit()}${randomLetter()}${randomDigit()}${randomLetter()}${randomLetterOrDigit()}${randomDigit()}${randomCharacter()}${randomSpecialCharacter()}`;
+}
+
+// Generates a code challenge and code verifier for authentication
+router.post('/start-auth', function (req, res) {
+  let weGood = checkAuth(req);
+
+  // Since we have everything, just return back true.
+  if (weGood) {
+    res.send({
+      weGood
+    });
+
+    return;
   }
 
   let data = {
@@ -161,6 +176,28 @@ router.get("/redirect", function (req, res) {
     req.session.tokenData.expirationDate = Date.now() + req.session.tokenData.expires_in;
 
     res.redirect(302, "/main");
+
+    return;
+  });
+});
+
+router.post("/basic-info", function (req, res) {
+  if (!checkAuth(req)) {
+    req.session.errorData = {
+      httpCode: 401,
+      message: "Bad authentication, try logging in again.",
+      title: "Unauthorized"
+    }
+  }
+
+  axios({
+    method: "GET",
+    url: "https://api.myanimelist.net/v2/users/@me",
+    headers: {
+      "Authorization": `Bearer ${req.session.tokenData.access_token}`
+    }
+  }).then(function (response) {
+    res.send(response.data);
 
     return;
   });

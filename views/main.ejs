@@ -1,9 +1,34 @@
 <%- include("header.ejs") %>
 <div id="content" class="container">
-  <h1>Hello World!</h1>
+  <div class="text-center" id="userPanel">
+    <img src="" id="avatarImage">
+    <h5 id="welcomeText"></h5>
+  </div>
+
+  <div id="loadingZone">
+    <h1 class="text-center" id="loadingText">Starting the application...</h1>
+    <p class="text-center">
+
+    </p>
+  </div>
 </div>
 <script>
   $(document).ready(function () {
+    setTimeout(function () {
+      $.ajax("/api/basic-info", {
+        method: "POST",
+        data: {
+          session: window.localStorage.getItem("session"),
+          state: window.localStorage.getItem("state")
+        }
+      }).done(function (data) {
+        console.log(data);
+        $("#welcomeText").text(`Welcome ${data.name}!`);
+        $("#avatarImage").prop("src", data.picture);
+        $("#userPanel").css("display", "block");
+        $("#loadingText").text("Crunching the numbers...");
+      });
+    }, 500);
   });
 </script>
 <script src="/static/js/app/main.js"></script>

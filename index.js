@@ -46,7 +46,7 @@ var sess = {
     prefix: 'muda:',
     // (optional) Adjusts the cleanup timer in milliseconds for deleting expired session rows.
     // Default is 5 minutes.
-    cleanupInterval: 600000, // 600000 ms = 10 minutes
+    cleanupInterval: 900000, // 900000 ms = 15 minutes
   }),
 }
 

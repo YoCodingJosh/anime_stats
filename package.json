@@ -8,6 +8,11 @@
     "start": "cross-env NODE_ENV=production nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "nodemonConfig": {
+    "ignore": [
+      "static/js/*"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/YoCodingJosh/anime_stats.git"

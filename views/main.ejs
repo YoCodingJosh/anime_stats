@@ -12,24 +12,5 @@
     </p>
   </div>
 </div>
-<script>
-  $(document).ready(function () {
-    setTimeout(function () {
-      $.ajax("/api/basic-info", {
-        method: "POST",
-        data: {
-          session: window.localStorage.getItem("session"),
-          state: window.localStorage.getItem("state")
-        }
-      }).done(function (data) {
-        console.log(data);
-        $("#welcomeText").text(`Welcome ${data.name}!`);
-        $("#avatarImage").prop("src", data.picture);
-        $("#userPanel").css("display", "block");
-        $("#loadingText").text("Crunching the numbers...");
-      });
-    }, 500);
-  });
-</script>
 <script src="/static/js/app/main.js"></script>
 <%- include("footer.ejs") %>

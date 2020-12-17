@@ -10,6 +10,9 @@ const { dictionary } = require('./data.json');
 const axios = require('axios').default;
 const qs = require('qs');
 
+const { startProcessing } = require("./stats");
+const session = require('express-session');
+
 // middleware that is specific to this router
 router.use(function timeLog(req, res, next) {
   console.log('Time: ', Date.now());
@@ -60,20 +63,20 @@ function buildState() {
   }
 
   let randomSpecialCharacter = function () {
-    var dict = "&$!#?.+%=";
+    var dict = "$!#?.+%=";
 
     return dict.charAt(Math.floor(Math.random() * dict.length));
   }
 
   let randomCharacter = function () {
-    var dict = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmopqrstuvwxyz0123456789&$!#?.+%=";
+    var dict = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmopqrstuvwxyz0123456789$!#?.+%=";
 
     return dict.charAt(Math.floor(Math.random() * dict.length));
   }
 
-  // # of possible states = 3.6744585696E15
-  // thats about 3.6 quadrillion
-  // there's only 7.8 billion people on earth. :)
+  // Number of states = 
+  // 343 * 10 * 10 * 10 * 52 * 10 * 52 * 62 * 10 * 70 * 8 = 3.220182784E15
+  // for reference: earth's 2020 population is 7.8 billion
   return `${word}-${randomDigit()}${randomDigit()}${randomDigit()}${randomLetter()}${randomDigit()}${randomLetter()}${randomLetterOrDigit()}${randomDigit()}${randomCharacter()}${randomSpecialCharacter()}`;
 }
 
@@ -197,9 +200,27 @@ router.post("/basic-info", function (req, res) {
       "Authorization": `Bearer ${req.session.tokenData.access_token}`
     }
   }).then(function (response) {
+    req.session.userData = response.data;
+
     res.send(response.data);
 
     return;
+  });
+});
+
+router.post("/get-stats", async function (req, res) {
+  if (!checkAuth(req)) {
+    req.session.errorData = {
+      httpCode: 401,
+      message: "Bad authentication, try logging in again.",
+      title: "Unauthorized"
+    }
+  }
+
+  var data = await startProcessing(req.session.tokenData);
+
+  res.send({
+    data
   });
 });
 

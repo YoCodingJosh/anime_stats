@@ -46,6 +46,8 @@ function buildPKCE() {
 function buildState() {
   var word = dictionary[Math.floor(Math.random() * dictionary.length)];
 
+  var specialCharacters = `$@![;?.(=:-(]^*`;
+
   let randomDigit = function () {
     return Math.floor(Math.random() * 10);
   };
@@ -63,21 +65,21 @@ function buildState() {
   }
 
   let randomSpecialCharacter = function () {
-    var dict = "$!#?.+%=";
-
-    return dict.charAt(Math.floor(Math.random() * dict.length));
+    return specialCharacters.charAt(Math.floor(Math.random() * specialCharacters.length));
   }
 
   let randomCharacter = function () {
-    var dict = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmopqrstuvwxyz0123456789$!#?.+%=";
+    var dict = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmopqrstuvwxyz0123456789" + specialCharacters;
 
     return dict.charAt(Math.floor(Math.random() * dict.length));
   }
 
   // Number of states = 
-  // 343 * 10 * 10 * 10 * 52 * 10 * 52 * 62 * 10 * 70 * 8 = 3.220182784E15
+  // 388 * 77 * 15 * 10 * 10 * 10 * 52 * 10 * 52 * 62 * 10 * 77 * 15 = >8.67748898E18 (that's 8.6 quintillion)
   // for reference: earth's 2020 population is 7.8 billion
-  return `${word}-${randomDigit()}${randomDigit()}${randomDigit()}${randomLetter()}${randomDigit()}${randomLetter()}${randomLetterOrDigit()}${randomDigit()}${randomCharacter()}${randomSpecialCharacter()}`;
+  let retval = `${word}-${randomCharacter()}${randomSpecialCharacter()}${randomDigit()}${randomDigit()}${randomDigit()}${randomLetter()}${randomDigit()}${randomLetter()}${randomLetterOrDigit()}${randomDigit()}${randomCharacter()}${randomSpecialCharacter()}`;
+  console.log(retval);
+  return retval;
 }
 
 // Generates a code challenge and code verifier for authentication

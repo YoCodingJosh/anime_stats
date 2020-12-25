@@ -10,7 +10,7 @@ const { dictionary } = require('./data.json');
 const axios = require('axios').default;
 const qs = require('qs');
 
-const { startProcessing } = require("./stats");
+const { startProcessing, calculateAverageScores, animeTypeCounts, mostWatchedStudios, calculateTimeWatched } = require("./stats");
 const session = require('express-session');
 
 // middleware that is specific to this router
@@ -221,8 +221,20 @@ router.post("/get-stats", async function (req, res) {
 
   var data = await startProcessing(req.session.tokenData);
 
+  var watchingData = data.watching;
+  var completedData = data.completed;
+
+  var averages = calculateAverageScores(data);
+  var animeTypes = animeTypeCounts(data);
+  var studios = mostWatchedStudios(data);
+  var watchTimes = calculateTimeWatched(data);
+
   res.send({
-    data
+    data,
+    averages,
+    animeTypes,
+    studios,
+    watchTimes,
   });
 });
 

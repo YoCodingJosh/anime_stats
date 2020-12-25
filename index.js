@@ -106,6 +106,7 @@ app.get('/auth-error', (req, res) => {
 
 // Let 'er rip!
 app.listen(APP_PORT, () => {
+  console.log("CodingJosh's Anime Stats for MyAnimeList - (C) 2020-2021 CodingJosh")
   console.log(`Running in ${process.env.NODE_ENV} mode`);
   console.log(`Server started on port ${APP_PORT}`);
 });

@@ -2,6 +2,7 @@
 <div id="content" class="container">
   <h1><%= errorData.title %></h1>
   <p><%= errorData.message %></p>
+  <img id="errorImage" style="display: block;">
   <small>HTTP <%= errorData.httpCode %></small>
   <br/>
   <small>State: <%= errorData.state %> </small>
@@ -10,6 +11,9 @@
 </div>
 <script>
   $(document).ready(function() {
+    // Set random error image.
+    $("#errorImage").prop("src", getRandomErrorGif());
+
     // Clear local storage to remove old session.
     window.localStorage.clear();
   });

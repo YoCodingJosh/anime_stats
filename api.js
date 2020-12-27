@@ -227,7 +227,7 @@ router.post("/get-stats", async function (req, res) {
   var averages = calculateAverageScores(data);
   var animeTypes = animeTypeCounts(data);
   var studios = mostWatchedStudios(data);
-  var watchTimes = calculateTimeWatched(data);
+  var watchTimes = calculateTimeWatched(data, animeTypes);
 
   res.send({
     data,

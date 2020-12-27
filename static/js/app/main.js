@@ -25,13 +25,17 @@ async function startProcessing() {
     }
   }, 600);
 
-  await $.ajax("/api/get-stats", {
+  var data = await $.ajax("/api/get-stats", {
     method: "POST",
     data: {
       session: window.localStorage.getItem("session"),
       state: window.localStorage.getItem("state")
     }
   });
+
+  console.log(data);
+
+  // Once we have the data, we can start doing some client side calculations and rendering.
 }
 
 async function main() {

@@ -33,6 +33,7 @@
     "express-session-sqlite": "^2.0.7",
     "nodemon": "^2.0.6",
     "qs": "^6.7.0",
+    "serve-favicon": "^2.5.0",
     "sqlite3": "^5.0.0"
   }
 }

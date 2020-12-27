@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const app = express();
+var favicon = require('serve-favicon');
 
 var api = require('./api');
 
@@ -16,6 +17,9 @@ const APP_PORT = 3000;
 // Parse URL-Encoded and JSON POST bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// Use the favicon
+app.use(favicon(path.join(__dirname, 'static', 'favicon.ico')));
 
 // Install EJS as the view engine.
 app.set("view engine", "ejs");

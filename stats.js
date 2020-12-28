@@ -550,7 +550,51 @@ function calculateTimeWatched(data, types) {
 function mostObscureAnime(data) {
   let mergedData = data.completed.concat(data.watching).concat(data.on_hold).concat(data.dropped);
 
-  // anime.statistics.num_list_users
+  let obscureList = [];
+
+  for (let i = 0; i < mergedData.length; i++) {
+    let anime = mergedData[i].node.data;
+    
+    obscureList.push({
+      id: anime.id,
+      num_users: anime.statistics.num_list_users
+    });
+  }
+
+  obscureList.sort((a, b) => (a.num_users > b.num_users) ? 1 : -1);
+
+  return obscureList;
+}
+
+function controversialOpinions(data) {
+  // I'm thinking abs(floor(avg_score) - user_score) >= 2 is controversial
+  // my way of thinking is every odd grade (good bad masterpiece etc) is an "intermediate" step
+  // and 2 or more steps is a "big" deviation from the consensus
+
+  let mergedData = data.completed.concat(data.watching).concat(data.on_hold).concat(data.dropped);
+
+  let opinions = [];
+
+  for (let i = 0; i < mergedData.length; i++) {
+    let anime = mergedData[i].node.data;
+    
+    if (anime.my_list_status.score !== 0) {
+      var deviation = Math.abs(Math.floor(anime.mean) - anime.my_list_status.score);
+
+      if (deviation >= 2) {
+        opinions.push({
+          id: anime.id,
+          deviation,
+          mean_score: anime.mean,
+          user_score: anime.my_list_status.score
+        });
+      }
+    }
+  }
+
+  opinions.sort((a, b) => (a.deviation > b.deviation) ? -1 : 1);
+
+  return opinions;
 }
 
 module.exports = {
@@ -571,4 +615,7 @@ module.exports = {
 
   // Shows the anime with the least number of members on MAL.
   mostObscureAnime,
+
+  // Shows anime with scores that go against the grain
+  controversialOpinions,
 };

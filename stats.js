@@ -568,12 +568,14 @@ function mostObscureAnime(data) {
 
 function controversialOpinions(data) {
   // I'm thinking abs(floor(avg_score) - user_score) >= 2 is controversial
-  // my way of thinking is every odd grade (good bad masterpiece etc) is an "intermediate" step
+  // my way of thinking is every odd grade between good bad masterpiece etc is an "intermediate" step
   // and 2 or more steps is a "big" deviation from the consensus
 
   let mergedData = data.completed.concat(data.watching).concat(data.on_hold).concat(data.dropped);
 
   let opinions = [];
+
+  const MAX_AMOUNT_OF_DEVIATIONS = 10;
 
   for (let i = 0; i < mergedData.length; i++) {
     let anime = mergedData[i].node.data;
@@ -592,7 +594,7 @@ function controversialOpinions(data) {
     }
   }
 
-  opinions.sort((a, b) => (a.deviation > b.deviation) ? -1 : 1);
+  opinions.sort((a, b) => (Math.abs(a.user_score - a.mean_score) > Math.abs(b.user_score - b.mean_score)) ? -1 : 1);
 
   return opinions;
 }

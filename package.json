@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon index.js",
-    "start": "cross-env NODE_ENV=production nodemon index.js",
+    "start": "cross-env NODE_ENV=production forever start index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "nodemonConfig": {
@@ -35,6 +35,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "express-session-sqlite": "^2.0.7",
+    "forever": "^3.0.4",
     "nodemon": "^2.0.6",
     "qs": "^6.7.0",
     "serve-favicon": "^2.5.0",

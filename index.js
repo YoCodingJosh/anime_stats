@@ -34,7 +34,7 @@ app.use(function (req, res, next) {
 let storeFactory = {};
 let storeConfig = {};
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.SESSION_STORE === undefined || process.env.SESSION_STORE === 'SQLITE') {
   const sqlite3 = require('sqlite3');
   const sqliteFactory = require('express-session-sqlite');
 
@@ -59,7 +59,7 @@ if (process.env.NODE_ENV !== 'production') {
     // Default is 5 minutes.
     cleanupInterval: 900000, // 900000 ms = 15 minutes
   };
-} else {
+} else if (process.env.SESSION_STORE === 'REDIS') {
   const redis = require('redis');
   const redisFactory = require('connect-redis');
 
@@ -75,7 +75,10 @@ if (process.env.NODE_ENV !== 'production') {
     prefix: 'muda:',
     ttl: 60 * 60 * 1000 // 1 hour
   }
+} else {
+  throw "What the heck. only supported values: SQLITE or REDIS";
 }
+
 var sess = {
   secret: 'Watashi wa ookina oppai ga sukidesu.',
   resave: true,

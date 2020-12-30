@@ -75,6 +75,7 @@ var sess = {
   secret: 'Watashi wa ookina oppai ga sukidesu.',
   resave: true,
   saveUninitialized: true,
+  cookie: {},
   store: new storeFactory(storeConfig),
 }
 

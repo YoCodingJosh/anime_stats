@@ -171,6 +171,9 @@ router.get("/redirect", function (req, res) {
   // Turn auth code into tokens
   let tokenUrl = "https://myanimelist.net/v1/oauth2/token";
 
+  console.log(secrets);
+  console.log(req.session);
+
   axios({
     method: "POST",
     url: tokenUrl,

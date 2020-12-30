@@ -10,6 +10,7 @@ const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3');
 const session = require('express-session');
 const sqliteFactory = require('express-session-sqlite');
+const redisFactory = require('connect-redis');
 
 // Elastic Beanstalk assumes that Node.js apps run on port 3000.
 const APP_PORT = process.env.PORT === undefined ? 3000 : process.env.PORT;
@@ -33,17 +34,17 @@ app.use(function (req, res, next) {
   next();
 });
 
-// Set up the session store to use SQLite3 in-memory database.
-// Reasons why we use sqlite in-memory is:
-//  * We don't really use the session that much,
-//  * and I'm too cheap for a proper database.
-const SqliteStore = sqliteFactory.default(session);
-var sess = {
-  secret: 'Watashi wa ookina oppai ga sukidesu.',
-  resave: true,
-  saveUninitialized: true,
-  cookie: {},
-  store: new SqliteStore({
+let storeFactory = {};
+let storeConfig = {};
+
+if (process.env.NODE_ENV !== 'production') {
+  // Set up the session store to use SQLite3 in-memory database.
+  // Reasons why we use sqlite in-memory is:
+  //  * We don't really use the session that much,
+  //  * and I'm too cheap for a proper database.
+  storeFactory = sqliteFactory.default(session);
+
+  storeConfig = {
     // Database library to use. Any library is fine as long as the API is compatible
     // with sqlite3, such as sqlite3-offline
     driver: sqlite3.Database,
@@ -57,7 +58,20 @@ var sess = {
     // (optional) Adjusts the cleanup timer in milliseconds for deleting expired session rows.
     // Default is 5 minutes.
     cleanupInterval: 900000, // 900000 ms = 15 minutes
-  }),
+  };
+} else {
+  storeFactory = redisFactory(session);
+  storeConfig = {
+    url: process.env.REDIS_URL,
+    prefix: 'muda:',
+    ttl: 3600 // 1 hour
+  }
+}
+var sess = {
+  secret: 'Watashi wa ookina oppai ga sukidesu.',
+  resave: true,
+  saveUninitialized: true,
+  store: new storeFactory(storeConfig),
 }
 
 if (app.get('env') === 'production') {

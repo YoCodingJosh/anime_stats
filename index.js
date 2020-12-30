@@ -12,7 +12,7 @@ const session = require('express-session');
 const sqliteFactory = require('express-session-sqlite');
 
 // Elastic Beanstalk assumes that Node.js apps run on port 3000.
-const APP_PORT = 3000;
+const APP_PORT = process.env.PORT === undefined ? 3000 : process.env.PORT;
 
 // Parse URL-Encoded and JSON POST bodies
 app.use(bodyParser.urlencoded({ extended: true }));

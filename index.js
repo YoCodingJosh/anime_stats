@@ -5,9 +5,23 @@ var favicon = require('serve-favicon');
 
 var api = require('./api');
 
+var secrets;
+
+try {
+  secrets = require('./secrets');
+} catch (ex) {
+  // we try to infer it from environment variables
+  secrets = {
+    client_id: process.env.MAL_CLIENT_ID,
+    client_secret: process.env.MAL_CLIENT_SECRET,
+    application_url: process.env.APP_URL,
+  };
+}
+
 const bodyParser = require('body-parser');
 
 const session = require('express-session');
+const { url } = require("inspector");
 
 // Elastic Beanstalk assumes that Node.js apps run on port 3000.
 const APP_PORT = process.env.PORT === undefined ? 3000 : process.env.PORT;
@@ -85,6 +99,7 @@ var sess = {
   saveUninitialized: true,
   cookie: {
     path: '/',
+    domain: require("url").parse(secrets.application_url).hostname,
     httpOnly: true,
     secure: false,
     maxAge: null

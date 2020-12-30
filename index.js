@@ -7,10 +7,7 @@ var api = require('./api');
 
 const bodyParser = require('body-parser');
 
-const sqlite3 = require('sqlite3');
 const session = require('express-session');
-const sqliteFactory = require('express-session-sqlite');
-const redisFactory = require('connect-redis');
 
 // Elastic Beanstalk assumes that Node.js apps run on port 3000.
 const APP_PORT = process.env.PORT === undefined ? 3000 : process.env.PORT;
@@ -38,6 +35,9 @@ let storeFactory = {};
 let storeConfig = {};
 
 if (process.env.NODE_ENV !== 'production') {
+  const sqlite3 = require('sqlite3');
+  const sqliteFactory = require('express-session-sqlite');
+
   // Set up the session store to use SQLite3 in-memory database.
   // Reasons why we use sqlite in-memory is:
   //  * We don't really use the session that much,
@@ -60,6 +60,8 @@ if (process.env.NODE_ENV !== 'production') {
     cleanupInterval: 900000, // 900000 ms = 15 minutes
   };
 } else {
+  const redisFactory = require('connect-redis');
+
   storeFactory = redisFactory(session);
   storeConfig = {
     url: process.env.REDIS_URL,

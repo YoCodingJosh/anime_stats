@@ -3,7 +3,18 @@ var router = express.Router();
 
 const crypto = require('crypto');
 
-const secrets = require('./secrets');
+var secrets;
+
+try {
+  secrets = require('./secrets');
+} catch (ex) {
+  // we try to infer it from environment variables
+  secrets = {
+    client_id: process.env.MAL_CLIENT_ID,
+    client_secret: process.env.MAL_CLIENT_SECRET,
+    application_url: process.env.APP_URL,
+  };
+}
 
 const { dictionary } = require('./data.json');
 

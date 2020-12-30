@@ -27,6 +27,12 @@ app.set("view engine", "ejs");
 // Serve the static content 
 app.use("/static", express.static(path.join(__dirname, "static")));
 
+// Set x-powered-by to something else
+app.use(function (req, res, next) {
+  res.setHeader('X-Powered-By', 'my crippling anime addiction');
+  next();
+});
+
 // Set up the session store to use SQLite3 in-memory database.
 // Reasons why we use sqlite in-memory is:
 //  * We don't really use the session that much,

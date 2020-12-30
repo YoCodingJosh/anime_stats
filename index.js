@@ -73,14 +73,19 @@ if (process.env.NODE_ENV !== 'production') {
     client: redisClient,
     url: process.env.REDIS_URL,
     prefix: 'muda:',
-    ttl: 3600 // 1 hour
+    ttl: 60 * 60 * 1000 // 1 hour
   }
 }
 var sess = {
   secret: 'Watashi wa ookina oppai ga sukidesu.',
   resave: true,
   saveUninitialized: true,
-  cookie: {},
+  cookie: {
+    path: '/',
+    httpOnly: true,
+    secure: false,
+    maxAge: null
+  },
   store: new storeFactory(storeConfig),
 }
 
@@ -103,7 +108,7 @@ app.get('/main', (req, res) => {
       title: "Unauthorized",
       httpCode: 401,
       message: "You need to login before performing this action.",
-      state: req.session.state === undefined ? "NULL": req.session.state
+      state: req.session.state === undefined ? "NULL" : req.session.state
     };
 
     res.redirect(303, "/auth-error");
@@ -134,7 +139,7 @@ app.get('/auth-error', (req, res) => {
   req.session.destroy(function () {
     res.status(errorData.httpCode);
 
-    res.render("auth_error.ejs", {errorData: errorData});
+    res.render("auth_error.ejs", { errorData: errorData });
   })
 });
 

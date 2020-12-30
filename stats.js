@@ -486,7 +486,7 @@ function mostWatchedStudios(data) {
 
         studios[studio.id].scoreCount += anime.my_list_status.score !== 0 ? 1 : 0;
         studios[studio.id].scoreSum += anime.my_list_status.score !== 0 ? anime.my_list_status.score : 0;
-        studios[studio.id].scoreAverage = anime.my_list_status.score; //  the first for this studio and in case this is the only anime for studio
+        studios[studio.id].scoreAverage = anime.my_list_status.score; // the first for this studio and in case this is the only anime for studio
 
         studios[studio.id].name = studio.name;
         studios[studio.id].count = 1;
@@ -554,7 +554,7 @@ function mostObscureAnime(data) {
 
   for (let i = 0; i < mergedData.length; i++) {
     let anime = mergedData[i].node.data;
-    
+
     obscureList.push({
       id: anime.id,
       num_users: anime.statistics.num_list_users
@@ -575,11 +575,9 @@ function controversialOpinions(data) {
 
   let opinions = [];
 
-  const MAX_AMOUNT_OF_DEVIATIONS = 10;
-
   for (let i = 0; i < mergedData.length; i++) {
     let anime = mergedData[i].node.data;
-    
+
     if (anime.my_list_status.score !== 0) {
       var deviation = Math.abs(Math.floor(anime.mean) - anime.my_list_status.score);
 
@@ -597,6 +595,59 @@ function controversialOpinions(data) {
   opinions.sort((a, b) => (Math.abs(a.user_score - a.mean_score) > Math.abs(b.user_score - b.mean_score)) ? -1 : 1);
 
   return opinions;
+}
+
+function genreInfo(data) {
+  let mergedData = data.completed.concat(data.watching).concat(data.dropped).concat(data.on_hold);
+
+  let genres = [];
+
+  for (let i = 0; i < mergedData.length; i++) {
+    let anime = mergedData[i].node.data;
+
+    // There can be more than one genre per anime, ie: Eromanga Sensei has Comedy, Drama, Ecchi, and Romance
+    for (let j = 0; j < anime.genres.length; j++) {
+      let genre = anime.genres[j];
+
+      // The reason I do it this way, is so I don't have to do a O(N) lookup every insert
+      if (genres[genre.id] === undefined) {
+        genres[genre.id] = {};
+
+        genres[genre.id].scoreCount = 0;
+        genres[genre.id].scoreSum = 0;
+        genres[genre.id].scoreAverage = 0;
+
+        genres[genre.id].scoreCount += anime.my_list_status.score !== 0 ? 1 : 0;
+        genres[genre.id].scoreSum += anime.my_list_status.score !== 0 ? anime.my_list_status.score : 0;
+        genres[genre.id].scoreAverage = anime.my_list_status.score;
+
+        genres[genre.id].name = genre.name;
+        genres[genre.id].count = 1;
+
+        genres[genre.id].id = genre.id; // so we can still do stuff client side
+      }
+      else {
+        genres[genre.id].count++;
+
+        // If it's not scored, we ignore calculating the average studio score.
+        if (anime.my_list_status.score !== 0) {
+          genres[genre.id].scoreCount++;
+          genres[genre.id].scoreSum += anime.my_list_status.score;
+
+          // Calculate the average as we go, so that way we don't have to iterate through the studio list.
+          genres[genre.id].scoreAverage = genres[genre.id].scoreSum / genres[genre.id].scoreCount;
+        }
+      }
+    }
+  }
+
+  genres.sort((a, b) => (a.count > b.count) ? -1 : 1);
+
+  var filtered = genres.filter(function (el) {
+    return el != null;
+  });
+
+  return filtered;
 }
 
 module.exports = {
@@ -620,4 +671,7 @@ module.exports = {
 
   // Shows anime with scores that go against the grain
   controversialOpinions,
+
+  // Most watched genres
+  genreInfo,
 };

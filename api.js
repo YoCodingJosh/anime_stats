@@ -10,7 +10,7 @@ const { dictionary } = require('./data.json');
 const axios = require('axios').default;
 const qs = require('qs');
 
-const { startProcessing, calculateAverageScores, animeTypeCounts, mostWatchedStudios, calculateTimeWatched, mostObscureAnime, controversialOpinions } = require("./stats");
+const { startProcessing, calculateAverageScores, animeTypeCounts, mostWatchedStudios, calculateTimeWatched, mostObscureAnime, controversialOpinions, genreInfo } = require("./stats");
 
 // middleware that is specific to this router
 router.use(function timeLog(req, res, next) {
@@ -226,6 +226,7 @@ router.post("/get-stats", async function (req, res) {
   var watchTimes = calculateTimeWatched(data, animeTypes);
   var obscure = mostObscureAnime(data);
   var differingOpinions = controversialOpinions(data);
+  var genreDetails = genreInfo(data);
 
   res.send({
     data,
@@ -235,6 +236,7 @@ router.post("/get-stats", async function (req, res) {
     watchTimes,
     obscure,
     differingOpinions,
+    genreDetails,
   });
 });
 

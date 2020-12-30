@@ -108,8 +108,13 @@ var sess = {
 }
 
 if (app.get('env') === 'production' && process.env !== "STAGING") {
-  app.set('trust proxy', 1) // trust first proxy
-  sess.cookie.secure = true // serve secure cookies
+  app.set('trust proxy', 1); // trust first proxy
+  sess.cookie.secure = true; // serve secure cookies
+}
+
+if (process.env === "STAGING") {
+  // staging environment on heroku is hosted behind a proxy
+  app.set('trust proxy', 1);
 }
 
 app.use(session(sess));

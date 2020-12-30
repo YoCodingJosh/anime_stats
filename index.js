@@ -97,13 +97,14 @@ var sess = {
   secret: 'Watashi wa ookina oppai ga sukidesu.',
   resave: false,
   saveUninitialized: false,
+  unset: "destroy",
   cookie: {
     path: '/',
     domain: require("url").parse(secrets.application_url).hostname,
     httpOnly: true,
     secure: false,
     maxAge: null,
-    sameSite: false,
+    sameSite: 'none',
   },
   store: new storeFactory(storeConfig),
 }

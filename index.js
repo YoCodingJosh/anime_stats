@@ -65,11 +65,12 @@ if (process.env.NODE_ENV !== 'production') {
 
   var conn = require("url").parse(process.env.REDIS_URL);
 
-  redis.auth(conn.auth.split(":")[1]);
+  var redisClient = redis.createClient(conn.port, conn.hostname);
+  redisClient.auth(conn.auth.split(":")[1]);
 
   storeFactory = redisFactory(session);
   storeConfig = {
-    client: redis.createClient(conn.port, conn.hostname),
+    client: redisClient,
     url: process.env.REDIS_URL,
     prefix: 'muda:',
     ttl: 3600 // 1 hour

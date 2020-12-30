@@ -95,14 +95,15 @@ if (process.env.SESSION_STORE === undefined || process.env.SESSION_STORE === 'SQ
 
 var sess = {
   secret: 'Watashi wa ookina oppai ga sukidesu.',
-  resave: true,
-  saveUninitialized: true,
+  resave: false,
+  saveUninitialized: false,
   cookie: {
     path: '/',
     domain: require("url").parse(secrets.application_url).hostname,
     httpOnly: true,
     secure: false,
-    maxAge: null
+    maxAge: null,
+    sameSite: false,
   },
   store: new storeFactory(storeConfig),
 }

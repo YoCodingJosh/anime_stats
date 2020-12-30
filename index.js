@@ -60,10 +60,12 @@ if (process.env.NODE_ENV !== 'production') {
     cleanupInterval: 900000, // 900000 ms = 15 minutes
   };
 } else {
+  const redis = require('redis');
   const redisFactory = require('connect-redis');
 
   storeFactory = redisFactory(session);
   storeConfig = {
+    client: redis.createClient(),
     url: process.env.REDIS_URL,
     prefix: 'muda:',
     ttl: 3600 // 1 hour

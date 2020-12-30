@@ -172,7 +172,10 @@ router.get("/redirect", function (req, res) {
   let tokenUrl = "https://myanimelist.net/v1/oauth2/token";
 
   console.log(secrets);
-  console.log(req.session);
+  console.log({
+    code_verifier: req.session.pkce,
+    state: req.session.state
+  });
 
   axios({
     method: "POST",

@@ -13,15 +13,18 @@ function startAuth() {
 
   $.ajax("/api/start-auth", {
     method: "POST",
+    xhrFields: {
+      withCredentials: true
+    },
     data: {
       session: window.localStorage.getItem("session"),
       state: window.localStorage.getItem("state")
     }
-  }).done(function(data) {
+  }).done(function (data) {
     if (!data.weGood) {
       window.localStorage.setItem("state", data.state);
       window.localStorage.setItem("session", data.sessionId);
-  
+
       let malAuthUrl = getAuthUrl(data.pkce, data.clientId);
       window.location.href = malAuthUrl;
     } else {
@@ -31,6 +34,6 @@ function startAuth() {
   });
 }
 
-$("#loginButton").click(function() {
+$("#loginButton").click(function () {
   startAuth();
 });

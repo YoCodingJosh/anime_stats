@@ -93,7 +93,18 @@ function getRandomLoadingText() {
     "Pushing the pencil...",
     "Counting computers... (ten so far)",
     "Thinking of things to say here...",
-    "If you see this, you're awesome!"
+    "If you see this, you're awesome!",
+    "Ugh. Fine. I guess you are my little PogChamp. Come here.",
+    "Slamming the fart...",
+    "Ganbare!",
+    "Do I dream of electric waifus?",
+    "Boop beep bop.. I'm a robot. Analyzing your data...",
+    "Analyzing...",
+    "Totally *not* watching VTubers...",
+    "a",
+    "Counting...",
+    "",
+    "Thinking... (my brain hurts!)"
   ];
 
   return texts[Math.floor(Math.random() * texts.length)];

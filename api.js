@@ -56,7 +56,7 @@ function buildPKCE() {
 function buildState() {
   var word = dictionary[Math.floor(Math.random() * dictionary.length)];
 
-  var specialCharacters = `$@![;?.(=:-(]^*`;
+  var specialCharacters = `$@![;?.(=:-])^*`;
 
   let randomDigit = function () {
     return Math.floor(Math.random() * 10);
@@ -85,7 +85,7 @@ function buildState() {
   }
 
   // Number of states = 
-  // 397 * 77 * 15 * 10 * 10 * 10 * 52 * 10 * 52 * 62 * 10 * 77 * 15 = >8.67748898E18 (that's 8.6 quintillion)
+  // 413 * 77 * 15 * 10 * 10 * 10 * 52 * 10 * 52 * 62 * 10 * 77 * 15 = >9.236605538E18 (that's 9.23 quintillion)
   // for reference: earth's 2020 population is 7.8 billion
   let retval = `${word}-${randomCharacter()}${randomSpecialCharacter()}${randomDigit()}${randomDigit()}${randomDigit()}${randomLetter()}${randomDigit()}${randomLetter()}${randomLetterOrDigit()}${randomDigit()}${randomCharacter()}${randomSpecialCharacter()}`;
   console.log(retval);

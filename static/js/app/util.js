@@ -97,14 +97,18 @@ function getRandomLoadingText() {
     "Ugh. Fine. I guess you are my little PogChamp. Come here.",
     "Slamming the fart...",
     "Ganbare!",
-    "Do I dream of electric waifus?",
+    "Do weeb androids dream of electric waifus?",
     "Boop beep bop.. I'm a robot. Analyzing your data...",
     "Analyzing...",
     "Totally *not* watching VTubers...",
     "a",
     "Counting...",
     "",
-    "Thinking... (my brain hurts!)"
+    "Thinking... (my brain hurts!)",
+    "Practicing my ahegao face...",
+    "Looking for more anime figures to buy...",
+    "Please wait...",
+    "nyapasu!",
   ];
 
   return texts[Math.floor(Math.random() * texts.length)];

@@ -246,14 +246,16 @@ router.post("/get-stats", async function (req, res) {
   var genreDetails = genreInfo(data);
 
   res.send({
-    data,
-    averages,
-    animeTypes,
-    studios,
-    watchTimes,
-    obscure,
-    differingOpinions,
-    genreDetails,
+    rawData: data,
+    stats: {
+      averages,
+      animeTypes,
+      studios,
+      watchTimes,
+      obscure,
+      differingOpinions,
+      genreDetails,
+    },
   });
 });
 

@@ -15,6 +15,7 @@ try {
     client_id: process.env.MAL_CLIENT_ID,
     client_secret: process.env.MAL_CLIENT_SECRET,
     application_url: process.env.APP_URL,
+    application_environment: process.env.APP_ENV
   };
 }
 
@@ -103,19 +104,18 @@ var sess = {
     httpOnly: true,
     secure: false,
     maxAge: null,
-    sameSite: 'Lax',
   },
   store: new storeFactory(storeConfig),
 }
 
-if (app.get('env') === 'production' && process.env !== "STAGING") {
+if (app.get('env') === 'production' && secrets.application_environment !== "STAGING") {
   app.set('trust proxy', 1); // trust first proxy
   sess.cookie.secure = true; // serve secure cookies
 }
 
-if (process.env === "STAGING") {
+if (secrets.application_environment === "STAGING") {
   // staging environment on heroku is hosted behind a proxy
-  app.set('trust proxy', 1);
+  app.set('trust proxy', true);
 }
 
 app.use(session(sess));

@@ -108,7 +108,7 @@ function getRandomLoadingText() {
     "Practicing my ahegao face...",
     "Looking for more anime figures to buy...",
     "Please wait...",
-    "nyapasu!",
+    "nyanpasu!",
   ];
 
   return texts[Math.floor(Math.random() * texts.length)];

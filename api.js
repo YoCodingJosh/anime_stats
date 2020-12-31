@@ -85,7 +85,7 @@ function buildState() {
   }
 
   // Number of states = 
-  // 388 * 77 * 15 * 10 * 10 * 10 * 52 * 10 * 52 * 62 * 10 * 77 * 15 = >8.67748898E18 (that's 8.6 quintillion)
+  // 397 * 77 * 15 * 10 * 10 * 10 * 52 * 10 * 52 * 62 * 10 * 77 * 15 = >8.67748898E18 (that's 8.6 quintillion)
   // for reference: earth's 2020 population is 7.8 billion
   let retval = `${word}-${randomCharacter()}${randomSpecialCharacter()}${randomDigit()}${randomDigit()}${randomDigit()}${randomLetter()}${randomDigit()}${randomLetter()}${randomLetterOrDigit()}${randomDigit()}${randomCharacter()}${randomSpecialCharacter()}`;
   console.log(retval);

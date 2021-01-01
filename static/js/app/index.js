@@ -1,3 +1,8 @@
+// Internet Explorer detection script since we use ES6 stuff.
+if (window.document.documentMode) {
+  $("#ieDetectionText").text("Warning! This application may not work correctly with Internet Explorer. Consider switching to a modern browser like Google Chrome or Mozilla Firefox.");
+}
+
 function getAuthUrl(pkce, clientId) {
   var challenge = pkce;
   var clientId = clientId;
@@ -31,7 +36,7 @@ function startAuth() {
       window.localStorage.setItem("state", data.state);
       window.localStorage.setItem("session", data.sessionId);
 
-      let malAuthUrl = getAuthUrl(data.pkce, data.clientId);
+      var malAuthUrl = getAuthUrl(data.pkce, data.clientId);
       window.location.href = malAuthUrl;
     } else {
       // Since we have an existing session that's valid, just go to the app.

@@ -13,6 +13,9 @@ async function start(tokenData) {
   let on_hold = [];
   let dropped = [];
 
+  // Just for completeness
+  let plan_to_watch = [];
+
   var watchingList = await axios({
     method: "GET",
     url: "https://api.myanimelist.net/v2/users/@me/animelist?status=watching&limit=1000",
@@ -101,6 +104,29 @@ async function start(tokenData) {
     dropped.push(...droppedList.data.data);
   }
 
+  var planList = await axios({
+    method: "GET",
+    url: "https://api.myanimelist.net/v2/users/@me/animelist?status=plan_to_watch&limit=1000",
+    headers: {
+      "Authorization": `Bearer ${tokenData.access_token}`
+    }
+  });
+
+  plan_to_watch.push(...planList.data.data);
+
+  while (planList.data.paging.next !== undefined) {
+    planList = await axios({
+      method: "GET",
+      url: planList.data.paging.next,
+      headers: {
+        "Authorization": `Bearer ${tokenData.access_token}`
+      }
+    });
+
+    plan_to_watch.push(...planList.data.data);
+  }
+
+
   // Get the detailed anime data
 
   let watchingDataPromises = [];
@@ -171,11 +197,29 @@ async function start(tokenData) {
     dropped[i].node.data = droppedData[i].data;
   }
 
+  let planDataPromises = [];
+  for (let i = 0; i < plan_to_watch.length; i++) {
+    planDataPromises.push(axios({
+      method: "GET",
+      url: `https://api.myanimelist.net/v2/anime/${plan_to_watch[i].node.id}?fields=id,title,main_picture,start_date,end_date,mean,rank,popularity,num_list_users,num_scoring_users,nsfw,updated_at,media_type,status,genres,my_list_status,num_episodes,start_season,source,average_episode_duration,rating,pictures,related_anime,studios,statistics`,
+      headers: {
+        "Authorization": `Bearer ${tokenData.access_token}`
+      }
+    }));
+  }
+
+  let planData = await Promise.all(planDataPromises);
+
+  for (let i = 0; i < plan_to_watch.length; i++) {
+    plan_to_watch[i].node.data = planData[i].data;
+  }
+
   return {
     watching,
     completed,
     on_hold,
-    dropped
+    dropped,
+    plan_to_watch
   };
 }
 

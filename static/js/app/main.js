@@ -17,6 +17,8 @@ async function startProcessing() {
   // Set the initial text.
   $("#loadingText").text(getRandomLoadingText());
 
+  var loadingComplete = false;
+
   // Randomly set it to a random string.
   let textUpdateInterval = setInterval(function() {
     // Only do it sometimes.
@@ -33,9 +35,14 @@ async function startProcessing() {
     }
   });
 
+  // TODO: What to do in case of error? Redirect to error page?
   console.log(data);
 
   // Once we have the data, we can start doing some client side calculations and rendering.
+
+  if (loadingComplete === true) {
+    clearInterval(textUpdateInterval);
+  }
 }
 
 async function main() {
@@ -44,6 +51,7 @@ async function main() {
 
 $(document).ready(function () {
   // Set random anime gif for loading
+  // TODO: Maybe rotate them around?
   $("#loadingImage").prop("src", getRandomLoadingGif());
 
   // Prefetch the user's name and profile picture

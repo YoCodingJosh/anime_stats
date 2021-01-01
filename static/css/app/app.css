@@ -24,3 +24,7 @@
   max-width: 100%;
   height: auto;
 }
+
+#dataZone {
+  display: none;
+}

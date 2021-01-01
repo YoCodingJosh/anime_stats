@@ -89,7 +89,7 @@ function getRandomLoadingText() {
     "Defeating the demon king with the power of friendship...",
     "Processing...",
     "Listening to the bad guy's speech...",
-    "読み込んでいます...",
+    "読み込んでいます / Now loading",
     "Pushing the pencil...",
     "Counting computers... (ten so far)",
     "Thinking of things to say here...",
@@ -109,6 +109,7 @@ function getRandomLoadingText() {
     "Looking for more anime figures to buy...",
     "Please wait...",
     "nyanpasu!",
+    "ちょっと まって ください / Please wait a moment",
   ];
 
   return texts[Math.floor(Math.random() * texts.length)];

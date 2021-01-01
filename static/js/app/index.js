@@ -11,6 +11,12 @@ function startAuth() {
   $("#loginButton").text("Loading...");
   $("#loginButton").prop("disabled", true);
 
+  // Just in case the API messes up or MAL is down (most likely the latter lmao)
+  setTimeout(function () {
+    $("#errorText").text("Looks like this is taking longer than expected. Please try refreshing the page!");
+    $("#errorText").append("<br/>");
+  }, 5000);
+
   $.ajax("/api/start-auth", {
     method: "POST",
     xhrFields: {

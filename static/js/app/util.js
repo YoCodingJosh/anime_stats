@@ -103,13 +103,13 @@ function getRandomLoadingText() {
     "Totally *not* watching VTubers...",
     "a",
     "Counting...",
-    "",
     "Thinking... (my brain hurts!)",
     "Practicing my ahegao face...",
     "Looking for more anime figures to buy...",
     "Please wait...",
     "nyanpasu!",
     "ちょっと まって ください / Please wait a moment",
+    "moe moe kyun",
   ];
 
   return texts[Math.floor(Math.random() * texts.length)];

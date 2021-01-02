@@ -17,8 +17,6 @@ async function startProcessing() {
   // Set the initial text.
   $("#loadingText").text(getRandomLoadingText());
 
-  var loadingComplete = false;
-
   // Randomly set it to a random string.
   let textUpdateInterval = setInterval(function() {
     // Only do it sometimes.
@@ -39,10 +37,13 @@ async function startProcessing() {
   console.log(data);
 
   // Once we have the data, we can start doing some client side calculations and rendering.
+  finishProcessing(data);
 
-  if (loadingComplete === true) {
-    clearInterval(textUpdateInterval);
-  }
+  // Now let's display everything!
+  clearInterval(textUpdateInterval);
+  $("#loadingZone").css("display", "none");
+  $("#dataZone").css("display", "block");
+  $(window).resize(); // fix weird bug with c3 and bootstrap grids
 }
 
 async function main() {

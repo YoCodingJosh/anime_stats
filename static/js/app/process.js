@@ -1,16 +1,14 @@
 // just to keep the code clean
 
 function buildBasicInfo(data) {
-  var total = data.rawData.watching.length + data.rawData.completed.length + data.rawData.dropped.length + data.rawData.on_hold.length + data.rawData.plan_to_watch.length;
+  var watching = data.rawData.watching.length;
+  var completed = data.rawData.completed.length;
+  var dropped = data.rawData.dropped.length;
+  var onHold = data.rawData.on_hold.length;
+  var planToWatch = data.rawData.plan_to_watch.length;
 
-  var watchingPercentage = ((data.rawData.watching.length / total) * 100).toFixed(3);
-  var completedPercentage = ((data.rawData.completed.length / total) * 100).toFixed(3);
-  var droppedPercentage = ((data.rawData.dropped.length / total) * 100).toFixed(3);
-  var onHoldPercentage = ((data.rawData.on_hold.length / total) * 100).toFixed(3);
-  var planPercentage = ((data.rawData.plan_to_watch.length / total) * 100).toFixed(3);
+  $("#amountPerCategory").text(`Watching: ${watching} - Completed: ${completed} - Dropped: ${dropped} - On Hold: ${onHold} - Plan to Watch: ${planToWatch}`)
 
-  $("#amountPerCategory").text(`Watching: ${watchingPercentage}% - Completed: ${completedPercentage}% - Dropped: ${droppedPercentage}% - On Hold: ${onHoldPercentage}% - Plan to Watch: ${planPercentage}%`)
-  
   var chart = c3.generate({
     bindto: "#basicStats",
     data: {
@@ -33,12 +31,7 @@ function buildBasicInfo(data) {
       ]
     },
     donut: {
-      title: "Basic Stats",
-      label: {
-        format: function (value, ratio, id) {
-          return d3.format('')(value);
-        }
-      }
+      title: "Anime List Ratio",
     },
   });
 }
@@ -54,6 +47,7 @@ function buildAnimeWatchTime(data) {
   const DAY_IN_SECONDS = 86400;
   const HOUR_IN_SECONDS = 3600
   const HOUR_IN_MINUTES = 60; // really....
+  const DAY_IN_HOURS = 24; // smh my head...
   const MINUTE_IN_SECONDS = 60; // do i really need this one? lmao
 
   var noYears = false;
@@ -80,6 +74,7 @@ function buildAnimeWatchTime(data) {
 
   if (watchSeconds < DAY_IN_SECONDS) {
     $("#daysSpan").remove();
+    $("#daysCombinedSpan").remove();
     noDays = true;
   }
 
@@ -120,7 +115,7 @@ function buildAnimeWatchTime(data) {
     }
   }
 
-  numMinutes = Math.trunc(remainder / HOUR_IN_MINUTES);
+  numMinutes = Math.trunc(remainder / MINUTE_IN_SECONDS);
   remainder = remainder % HOUR_IN_MINUTES;
 
   $("#secondsText").text(`${remainder}`);
@@ -147,6 +142,9 @@ function buildAnimeWatchTime(data) {
   if (!noDays) {
     $("#daysText").text(`${numDays}`);
     $("#daysLabel").text(`day${numDays === 1 ? "" : "s"}`);
+
+    $("#daysCombinedText").text(`${(watchSeconds / MINUTE_IN_SECONDS / HOUR_IN_MINUTES / DAY_IN_HOURS).toFixed(3)}`);
+    $("#daysCombinedLabel").text(`day${numDays === 1 ? "" : "s"}`);
   }
 
   if (!noHours) {
@@ -155,7 +153,50 @@ function buildAnimeWatchTime(data) {
   }
 }
 
+function buildAnimeTypes(data) {
+  var watching = data.stats.animeTypes.watching;
+  var completed = data.stats.animeTypes.completed;
+  var dropped = data.stats.animeTypes.dropped;
+  var onHold = data.stats.animeTypes.on_hold;
+  var planToWatch = data.stats.animeTypes.plan_to_watch;
+
+  var chart = c3.generate({
+    bindto: "#animeTypesChart",
+    data: {
+      x: 'x',
+      columns: [
+        ["x", "TV", "OVA", "ONA", "Movie", "Special"],
+        ['Watching', watching.tv, watching.ova, watching.ona, watching.movies, watching.special],
+        ['Completed', completed.tv, completed.ova, completed.ona, completed.movies, completed.special],
+        ['Dropped', dropped.tv, dropped.ova, dropped.ona, dropped.movies, dropped.special],
+        ['On Hold', onHold.tv, onHold.ova, onHold.ona, onHold.movies, onHold.special],
+        ['Plan to Watch', planToWatch.tv, planToWatch.ova, planToWatch.ona, planToWatch.movies, planToWatch.special],
+      ],
+      type: 'bar',
+      groups: [
+        ['Watching', 'Completed', 'Dropped', 'On Hold', 'Plan to Watch']
+      ]
+    },
+    color: {
+      pattern: [
+        "#2db039",
+        "#26448f",
+        "#a12f31",
+        "#f9d457",
+        "#c3c3c3"
+      ]
+    },
+    axis: {
+      rotated: true,
+      x: {
+        type: 'category'
+      }
+    },
+  });
+}
+
 function finishProcessing(data) {
   buildBasicInfo(data);
   buildAnimeWatchTime(data);
+  buildAnimeTypes(data);
 }

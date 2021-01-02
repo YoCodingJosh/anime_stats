@@ -362,6 +362,17 @@ function animeTypeCounts(data) {
       special_episodes_watched: 0,
       special_episodes_total: 0
     },
+    plan_to_watch: {
+      tv: 0,
+      // tv_episodes: 0,
+      ova: 0,
+      // ova_episodes: 0,
+      movies: 0,
+      ona: 0,
+      // ona_episodes: 0,
+      special: 0,
+      // special_episodes: 0
+    }
   };
 
   for (let i = 0; i < data.completed.length; i++) {
@@ -492,6 +503,32 @@ function animeTypeCounts(data) {
         types.dropped.ona++;
         types.dropped.ona_episodes_watched += anime.my_list_status.num_episodes_watched;
         types.dropped.ona_episodes_total += anime.num_episodes;
+        break;
+    }
+  }
+
+  for (let i = 0; i < data.plan_to_watch.length; i++) {
+    let anime = data.plan_to_watch[i].node.data;
+
+    switch (anime.media_type) {
+      case "movie":
+        types.plan_to_watch.movies++;
+        break;
+      case "ova":
+        types.plan_to_watch.ova++;
+        // types.plan_to_watch.ova_episodes += anime.num_episodes;
+        break;
+      case "tv":
+        types.plan_to_watch.tv++;
+        // types.plan_to_watch.tv_episodes += anime.num_episodes;
+        break;
+      case "special":
+        types.plan_to_watch.special++;
+        // types.plan_to_watch.special_episodes += anime.num_episodes;
+        break;
+      case "ona":
+        types.plan_to_watch.ona++;
+        // types.plan_to_watch.ona_episodes += anime.num_episodes;
         break;
     }
   }

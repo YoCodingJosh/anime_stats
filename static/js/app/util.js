@@ -25,6 +25,7 @@ function getRandomErrorGif() {
     "https://cdn.codingjosh.com/anime_stats/error/suya_mad.gif",
     "https://cdn.codingjosh.com/anime_stats/error/suya_panic.gif",
     "https://cdn.codingjosh.com/anime_stats/error/umaru_cartridge.gif",
+    "https://cdn.codingjosh.com/anime_stats/error/xqc_slam_desk.gif",
   ];
 
   return gifs[Math.floor(Math.random() * gifs.length)];

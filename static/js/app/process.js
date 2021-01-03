@@ -160,6 +160,8 @@ function buildAnimeTypes(data) {
   var onHold = data.stats.animeTypes.on_hold;
   var planToWatch = data.stats.animeTypes.plan_to_watch;
 
+  var planToWatchData = ['Plan to Watch', planToWatch.tv, planToWatch.ova, planToWatch.ona, planToWatch.movies, planToWatch.special];
+
   var chart = c3.generate({
     bindto: "#animeTypesChart",
     data: {
@@ -170,7 +172,7 @@ function buildAnimeTypes(data) {
         ['Completed', completed.tv, completed.ova, completed.ona, completed.movies, completed.special],
         ['Dropped', dropped.tv, dropped.ova, dropped.ona, dropped.movies, dropped.special],
         ['On Hold', onHold.tv, onHold.ova, onHold.ona, onHold.movies, onHold.special],
-        ['Plan to Watch', planToWatch.tv, planToWatch.ova, planToWatch.ona, planToWatch.movies, planToWatch.special],
+        planToWatchData,
       ],
       type: 'bar',
       groups: [
@@ -193,6 +195,20 @@ function buildAnimeTypes(data) {
       }
     },
   });
+
+  $("#animeTypesIncludePlanCheckbox").change(function () {
+    if (this.checked) {
+      chart.load({
+        columns: [
+          planToWatchData
+        ]
+      });
+    } else {
+      chart.load({
+        unload: 'Plan to Watch'
+      })
+    }
+  })
 }
 
 function finishProcessing(data) {

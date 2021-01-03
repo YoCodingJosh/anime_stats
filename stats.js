@@ -553,6 +553,8 @@ function mostWatchedStudios(data) {
   for (let i = 0; i < mergedData.length; i++) {
     let anime = mergedData[i].node.data;
 
+    let animeWatchedTotal = anime.my_list_status.num_episodes_watched * anime.average_episode_duration;
+
     // There can be more than one studio per anime, ie: Franxx has A-1, Trigger, and Cloverworks
     for (let j = 0; j < anime.studios.length; j++) {
       let studio = anime.studios[j];
@@ -573,6 +575,8 @@ function mostWatchedStudios(data) {
         studios[studio.id].count = 1;
 
         studios[studio.id].id = studio.id; // so we can still do stuff client side
+
+        studios[studio.id].watchTime = animeWatchedTotal;
       }
       else {
         studios[studio.id].count++;
@@ -584,21 +588,37 @@ function mostWatchedStudios(data) {
 
           // Calculate the average as we go, so that way we don't have to iterate through the studio list.
           studios[studio.id].scoreAverage = studios[studio.id].scoreSum / studios[studio.id].scoreCount;
+
+          studios[studio.id].watchTime += animeWatchedTotal;
         }
       }
     }
   }
 
-  studios.sort((a, b) => (a.count > b.count) ? -1 : 1);
+  studios.sort((a, b) => (a.scoreCount > b.scoreCount) ? -1 : 1);
 
   var filtered = studios.filter(function (el) {
-    return el != null;
+    // We don't want empty filler between studio ids and N/A scores (not scored yet)
+    return el !== null && el.scoreAverage !== 0;
   });
 
   return filtered;
 }
 
 function calculateTimeWatched(data, types) {
+  let watchTypes = {
+    tv: 0,
+    average_tv: 0,
+    ova: 0,
+    average_ova: 0,
+    movies: 0,
+    average_movie: 0,
+    ona: 0,
+    average_ona: 0,
+    special: 0,
+    average_special: 0
+  };
+
   let totalWatchTime = 0;
 
   let mergedData = data.completed.concat(data.watching).concat(data.on_hold).concat(data.dropped);
@@ -606,25 +626,40 @@ function calculateTimeWatched(data, types) {
   for (let i = 0; i < mergedData.length; i++) {
     let anime = mergedData[i].node.data;
 
-    totalWatchTime += anime.my_list_status.num_episodes_watched * anime.average_episode_duration;
+    let animeWatchedTotal = anime.my_list_status.num_episodes_watched * anime.average_episode_duration;
+
+    totalWatchTime += animeWatchedTotal;
 
     switch (anime.media_type) {
       case "movie":
+        watchTypes.movies += animeWatchedTotal;
         break;
       case "ova":
+        watchTypes.ova += animeWatchedTotal;
         break;
       case "tv":
+        watchTypes.tv += animeWatchedTotal;
         break;
       case "special":
+        watchTypes.special += animeWatchedTotal;
         break;
       case "ona":
+        watchTypes.ona += animeWatchedTotal;
         break;
     }
   }
 
+  // I love tedious shit like this... :|
+  watchTypes.average_movie = watchTypes.movies / (types.completed.movies + types.dropped.movies_watched + types.on_hold.movies_watched + types.watching.movies_watched);
+  watchTypes.average_ova = watchTypes.ova / (types.completed.ova_episodes + types.dropped.ova_episodes_watched + types.on_hold.ova_episodes_watched + types.watching.ova_episodes_watched);
+  watchTypes.average_tv = watchTypes.tv / (types.completed.tv_episodes + types.dropped.tv_episodes_watched + types.on_hold.tv_episodes_watched + types.watching.tv_episodes_watched);
+  watchTypes.average_special = watchTypes.special / (types.completed.special_episodes + types.dropped.special_episodes_watched + types.on_hold.special_episodes_watched + types.watching.special_episodes_watched);
+  watchTypes.average_ona = watchTypes.ona / (types.completed.ona_episodes + types.dropped.ona_episodes_watched + types.on_hold.ona_episodes_watched + types.watching.ona_episodes_watched);
+
   return {
     totalWatchTime,
-    averageDuration: totalWatchTime / types.total_watched
+    averageDuration: totalWatchTime / types.total_watched,
+    watchTypes,
   };
 }
 

@@ -788,6 +788,6 @@ module.exports = {
   // Shows anime with scores that go against the grain
   controversialOpinions,
 
-  // Most watched genres
+  // Most watched genres (ie: Action, Drama, Comedy, Slice of Life, etc)
   genreInfo,
 };

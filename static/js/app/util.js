@@ -37,6 +37,7 @@ function getRandomLoadingGif() {
     "https://cdn.codingjosh.com/anime_stats/loading/bell_hestia_teeth_brushing.gif",
     "https://cdn.codingjosh.com/anime_stats/loading/chika_dancing.gif",
     "https://cdn.codingjosh.com/anime_stats/loading/chika_loading.gif",
+    "https://cdn.codingjosh.com/anime_stats/loading/dino_nosebleed.gif",
     "https://cdn.codingjosh.com/anime_stats/loading/hakase_popcorn.gif",
     "https://cdn.codingjosh.com/anime_stats/loading/konosuba.gif",
     "https://cdn.codingjosh.com/anime_stats/loading/nichijou.gif",

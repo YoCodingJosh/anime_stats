@@ -1,5 +1,7 @@
 // this is where all the magic happens
 
+// TODO: Split into a ./stats/ route and break apart into different modules.
+
 const axios = require('axios').default;
 
 async function start(tokenData) {
@@ -408,6 +410,7 @@ function animeTypeCounts(data) {
     switch (anime.media_type) {
       case "movie":
         // Since movies are only 1 "episode", we just increment movies.
+        // chotto matte! Zoku Owarimonogatari is listed as a movie with 6 episodes.
         types.watching.movies++;
 
         if (anime.my_list_status.status === "completed") {
@@ -683,7 +686,7 @@ function mostObscureAnime(data) {
 }
 
 function controversialOpinions(data) {
-  // I'm thinking abs(floor(avg_score) - user_score) >= 2 is controversial
+  // I'm thinking abs(floor(avg_score) - user_score) or abs(ceil(avg_score) - user_score) >= 2 is controversial
   // my way of thinking is every odd grade between good bad masterpiece etc is an "intermediate" step
   // and 2 or more steps is a "big" deviation from the consensus
 
@@ -695,12 +698,14 @@ function controversialOpinions(data) {
     let anime = mergedData[i].node.data;
 
     if (anime.my_list_status.score !== 0) {
-      var deviation = Math.abs(Math.floor(anime.mean) - anime.my_list_status.score);
+      // Since the score is represented as a decimal, it'd be fair to evaluate both floor/ceil.
+      var deviationFloor = Math.abs(Math.floor(anime.mean) - anime.my_list_status.score);
+      var deviationCeil = Math.abs(Math.ceil(anime.mean) - anime.my_list_status.score);
 
-      if (deviation >= 2) {
+      if (deviationFloor >= 2 || deviationCeil >= 2) {
         opinions.push({
           id: anime.id,
-          deviation,
+          deviation: deviationFloor > deviationCeil ? deviationFloor : deviationCeil,
           mean_score: anime.mean,
           user_score: anime.my_list_status.score
         });
@@ -721,6 +726,8 @@ function genreInfo(data) {
   for (let i = 0; i < mergedData.length; i++) {
     let anime = mergedData[i].node.data;
 
+    let animeWatchedTotal = anime.my_list_status.num_episodes_watched * anime.average_episode_duration;
+
     // There can be more than one genre per anime, ie: Eromanga Sensei has Comedy, Drama, Ecchi, and Romance
     for (let j = 0; j < anime.genres.length; j++) {
       let genre = anime.genres[j];
@@ -740,6 +747,8 @@ function genreInfo(data) {
         genres[genre.id].name = genre.name;
         genres[genre.id].count = 1;
 
+        genres[genre.id].watch_time = animeWatchedTotal;
+
         genres[genre.id].id = genre.id; // so we can still do stuff client side
       }
       else {
@@ -749,6 +758,8 @@ function genreInfo(data) {
         if (anime.my_list_status.score !== 0) {
           genres[genre.id].scoreCount++;
           genres[genre.id].scoreSum += anime.my_list_status.score;
+
+          genres[genre.id].watch_time += animeWatchedTotal;
 
           // Calculate the average as we go, so that way we don't have to iterate through the studio list.
           genres[genre.id].scoreAverage = genres[genre.id].scoreSum / genres[genre.id].scoreCount;

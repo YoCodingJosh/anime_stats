@@ -203,6 +203,10 @@ router.post("/basic-info", function (req, res) {
       message: "Bad authentication, try logging in again.",
       title: "Unauthorized"
     }
+
+    res.redirect(303, "/auth-error");
+
+    return;
   }
 
   axios({
@@ -227,6 +231,10 @@ router.post("/get-stats", async function (req, res) {
       message: "Bad authentication, try logging in again.",
       title: "Unauthorized"
     }
+
+    res.redirect(303, "/auth-error");
+
+    return;
   }
 
   var data = await startProcessing(req.session.tokenData);
@@ -242,6 +250,13 @@ router.post("/get-stats", async function (req, res) {
   res.send({
     rawData: data,
     stats: {
+      basic: {
+        watching: data.watching.length,
+        completed: data.completed.length,
+        dropped: data.dropped.length,
+        on_hold: data.on_hold.length,
+        plan_to_watch: data.plan_to_watch.length,
+      },
       averages,
       animeTypes,
       studios,

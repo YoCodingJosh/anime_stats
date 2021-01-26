@@ -7,7 +7,7 @@ function buildBasicInfo(data) {
   var onHold = data.rawData.on_hold.length;
   var planToWatch = data.rawData.plan_to_watch.length;
 
-  $("#amountPerCategory").text(`Watching: ${watching} - Completed: ${completed} - Dropped: ${dropped} - On Hold: ${onHold} - Plan to Watch: ${planToWatch}`)
+  $("#amountPerCategory").text(`Watching: ${watching} - Completed: ${completed} - Dropped: ${dropped} - On Hold: ${onHold} - Plan to Watch: ${planToWatch}`);
 
   var chart = c3.generate({
     bindto: "#basicStats",

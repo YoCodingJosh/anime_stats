@@ -20,7 +20,7 @@ async function start(tokenData) {
 
   var watchingList = await axios({
     method: "GET",
-    url: "https://api.myanimelist.net/v2/users/@me/animelist?status=watching&limit=1000",
+    url: "https://api.myanimelist.net/v2/users/@me/animelist?status=watching&limit=1000&nsfw=1",
     headers: {
       "Authorization": `Bearer ${tokenData.access_token}`
     }
@@ -42,7 +42,7 @@ async function start(tokenData) {
 
   var completedList = await axios({
     method: "GET",
-    url: "https://api.myanimelist.net/v2/users/@me/animelist?status=completed&limit=1000",
+    url: "https://api.myanimelist.net/v2/users/@me/animelist?status=completed&limit=1000&nsfw=1",
     headers: {
       "Authorization": `Bearer ${tokenData.access_token}`
     }
@@ -64,7 +64,7 @@ async function start(tokenData) {
 
   var onHoldList = await axios({
     method: "GET",
-    url: "https://api.myanimelist.net/v2/users/@me/animelist?status=on_hold&limit=1000",
+    url: "https://api.myanimelist.net/v2/users/@me/animelist?status=on_hold&limit=1000&nsfw=1",
     headers: {
       "Authorization": `Bearer ${tokenData.access_token}`
     }
@@ -86,7 +86,7 @@ async function start(tokenData) {
 
   var droppedList = await axios({
     method: "GET",
-    url: "https://api.myanimelist.net/v2/users/@me/animelist?status=dropped&limit=1000",
+    url: "https://api.myanimelist.net/v2/users/@me/animelist?status=dropped&limit=1000&nsfw=1",
     headers: {
       "Authorization": `Bearer ${tokenData.access_token}`
     }
@@ -108,7 +108,7 @@ async function start(tokenData) {
 
   var planList = await axios({
     method: "GET",
-    url: "https://api.myanimelist.net/v2/users/@me/animelist?status=plan_to_watch&limit=1000",
+    url: "https://api.myanimelist.net/v2/users/@me/animelist?status=plan_to_watch&limit=1000&nsfw=1",
     headers: {
       "Authorization": `Bearer ${tokenData.access_token}`
     }

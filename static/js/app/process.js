@@ -160,18 +160,18 @@ function buildAnimeTypes(data) {
   var onHold = data.stats.animeTypes.on_hold;
   var planToWatch = data.stats.animeTypes.plan_to_watch;
 
-  var planToWatchData = ['Plan to Watch', planToWatch.tv, planToWatch.ova, planToWatch.ona, planToWatch.movies, planToWatch.special];
+  var planToWatchData = ['Plan to Watch', planToWatch.tv, planToWatch.ova, planToWatch.ona, planToWatch.movies, planToWatch.special, planToWatch.music];
 
   var chart = c3.generate({
     bindto: "#animeTypesChart",
     data: {
       x: 'x',
       columns: [
-        ["x", "TV", "OVA", "ONA", "Movie", "Special"],
-        ['Watching', watching.tv, watching.ova, watching.ona, watching.movies, watching.special],
-        ['Completed', completed.tv, completed.ova, completed.ona, completed.movies, completed.special],
-        ['Dropped', dropped.tv, dropped.ova, dropped.ona, dropped.movies, dropped.special],
-        ['On Hold', onHold.tv, onHold.ova, onHold.ona, onHold.movies, onHold.special],
+        ["x", "TV", "OVA", "ONA", "Movie", "Special", "Music"],
+        ['Watching', watching.tv, watching.ova, watching.ona, watching.movies, watching.special, watching.music],
+        ['Completed', completed.tv, completed.ova, completed.ona, completed.movies, completed.special, completed.music],
+        ['Dropped', dropped.tv, dropped.ova, dropped.ona, dropped.movies, dropped.special, dropped.music],
+        ['On Hold', onHold.tv, onHold.ova, onHold.ona, onHold.movies, onHold.special, onHold.music],
         planToWatchData,
       ],
       type: 'bar',
@@ -201,6 +201,9 @@ function buildAnimeTypes(data) {
       chart.load({
         columns: [
           planToWatchData
+        ],
+        groups: [
+          ['Watching', 'Completed', 'Dropped', 'On Hold', 'Plan to Watch']
         ]
       });
     } else {
@@ -211,8 +214,22 @@ function buildAnimeTypes(data) {
   })
 }
 
+function buildMostObscureAnime(data) {
+  var top_ten = data.stats.obscure.slice(0, 10);
+
+  console.log(top_ten);
+}
+
+function buildMostFamousAnime(data) {
+  var top_ten = data.stats.obscure.slice(Math.max(data.stats.obscure.length - 10, 0));
+
+  console.log(top_ten);
+}
+
 function finishProcessing(data) {
   buildBasicInfo(data);
   buildAnimeWatchTime(data);
   buildAnimeTypes(data);
+  buildMostObscureAnime(data);
+  buildMostFamousAnime(data);
 }

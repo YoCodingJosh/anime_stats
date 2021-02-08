@@ -127,8 +127,7 @@ async function start(tokenData) {
 
     plan_to_watch.push(...planList.data.data);
   }
-
-
+  
   // Get the detailed anime data
 
   let watchingDataPromises = [];
@@ -311,10 +310,13 @@ function animeTypeCounts(data) {
       ova: 0,
       ova_episodes: 0,
       movies: 0,
+      movie_episodes: 0,
       ona: 0,
       ona_episodes: 0,
       special: 0,
-      special_episodes: 0
+      special_episodes: 0,
+      music: 0,
+      music_episodes: 0,
     },
     watching: {
       tv: 0,
@@ -324,13 +326,17 @@ function animeTypeCounts(data) {
       ova_episodes_watched: 0,
       ova_episodes_total: 0,
       movies: 0,
+      movie_episodes_total: 0,
       movies_watched: 0,
       ona: 0,
       ona_episodes_watched: 0,
       ona_episodes_total: 0,
       special: 0,
       special_episodes_watched: 0,
-      special_episodes_total: 0
+      special_episodes_total: 0,
+      music: 0,
+      music_episodes_watched: 0,
+      music_episodes_total: 0,
     },
     on_hold: {
       tv: 0,
@@ -340,13 +346,17 @@ function animeTypeCounts(data) {
       ova_episodes_watched: 0,
       ova_episodes_total: 0,
       movies: 0,
+      movie_episodes_total: 0,
       movies_watched: 0,
       ona: 0,
       ona_episodes_watched: 0,
       ona_episodes_total: 0,
       special: 0,
       special_episodes_watched: 0,
-      special_episodes_total: 0
+      special_episodes_total: 0,
+      music: 0,
+      music_episodes_watched: 0,
+      music_episodes_total: 0,
     },
     dropped: {
       tv: 0,
@@ -356,24 +366,25 @@ function animeTypeCounts(data) {
       ova_episodes_watched: 0,
       ova_episodes_total: 0,
       movies: 0,
+      movie_episodes_total: 0,
       movies_watched: 0,
       ona: 0,
       ona_episodes_watched: 0,
       ona_episodes_total: 0,
       special: 0,
       special_episodes_watched: 0,
-      special_episodes_total: 0
+      special_episodes_total: 0,
+      music: 0,
+      music_episodes_watched: 0,
+      music_episodes_total: 0,
     },
     plan_to_watch: {
       tv: 0,
-      // tv_episodes: 0,
       ova: 0,
-      // ova_episodes: 0,
       movies: 0,
       ona: 0,
-      // ona_episodes: 0,
       special: 0,
-      // special_episodes: 0
+      music: 0,
     }
   };
 
@@ -382,8 +393,10 @@ function animeTypeCounts(data) {
 
     switch (anime.media_type) {
       case "movie":
-        // Since movies are only 1 "episode", we just increment movies.
+        // You would think that movies would be 1 episode...
+        // but Zoku Owarimonogatari is listed as a movie with 6 episodes.
         types.completed.movies++;
+        types.completed.movie_episodes += anime.num_episodes;
         break;
       case "ova":
         types.completed.ova++;
@@ -401,6 +414,10 @@ function animeTypeCounts(data) {
         types.completed.ona++;
         types.completed.ona_episodes += anime.num_episodes;
         break;
+      case "music":
+        types.completed.music++;
+        types.completed.music_episodes += anime.num_episodes;
+        break;
     }
   }
 
@@ -409,13 +426,9 @@ function animeTypeCounts(data) {
 
     switch (anime.media_type) {
       case "movie":
-        // Since movies are only 1 "episode", we just increment movies.
-        // chotto matte! Zoku Owarimonogatari is listed as a movie with 6 episodes.
         types.watching.movies++;
-
-        if (anime.my_list_status.status === "completed") {
-          types.watching.movies_watched++;
-        }
+        types.watching.movies_watched += anime.my_list_status.num_episodes_watched;
+        types.watching.movie_episodes_total += anime.num_episodes;
         break;
       case "ova":
         types.watching.ova++;
@@ -437,6 +450,11 @@ function animeTypeCounts(data) {
         types.watching.ona_episodes_watched += anime.my_list_status.num_episodes_watched;
         types.watching.ona_episodes_total += anime.num_episodes;
         break;
+      case "music":
+        types.watching.music++;
+        types.watching.music_episodes_watched += anime.my_list_status.num_episodes_watched;
+        types.watching.music_episodes_total += anime.num_episodes;
+        break;
     }
   }
 
@@ -445,12 +463,9 @@ function animeTypeCounts(data) {
 
     switch (anime.media_type) {
       case "movie":
-        // Since movies are only 1 "episode", we just increment movies.
         types.on_hold.movies++;
-
-        if (anime.my_list_status.status === "completed") {
-          types.on_hold.movies_watched++;
-        }
+        types.on_hold.movies_watched += anime.my_list_status.num_episodes_watched;
+        types.on_hold.movie_episodes_total += anime.num_episodes;
         break;
       case "ova":
         types.on_hold.ova++;
@@ -472,6 +487,11 @@ function animeTypeCounts(data) {
         types.on_hold.ona_episodes_watched += anime.my_list_status.num_episodes_watched;
         types.on_hold.ona_episodes_total += anime.num_episodes;
         break;
+      case "music":
+        types.on_hold.music++;
+        types.on_hold.music_episodes_watched += anime.my_list_status.num_episodes_watched;
+        types.on_hold.music_episodes_total += anime.num_episodes;
+        break;
     }
   }
 
@@ -480,12 +500,9 @@ function animeTypeCounts(data) {
 
     switch (anime.media_type) {
       case "movie":
-        // Since movies are only 1 "episode", we just increment movies.
         types.dropped.movies++;
-
-        if (anime.my_list_status.status === "completed") {
-          types.dropped.movies_watched++;
-        }
+        types.dropped.movies_watched += anime.my_list_status.num_episodes_watched;
+        types.dropped.movie_episodes_total += anime.num_episodes;
         break;
       case "ova":
         types.dropped.ova++;
@@ -507,6 +524,11 @@ function animeTypeCounts(data) {
         types.dropped.ona_episodes_watched += anime.my_list_status.num_episodes_watched;
         types.dropped.ona_episodes_total += anime.num_episodes;
         break;
+      case "music":
+        types.dropped.music++;
+        types.dropped.music_episodes_watched += anime.my_list_status.num_episodes_watched;
+        types.dropped.music_episodes_total += anime.num_episodes;
+        break;
     }
   }
 
@@ -519,30 +541,29 @@ function animeTypeCounts(data) {
         break;
       case "ova":
         types.plan_to_watch.ova++;
-        // types.plan_to_watch.ova_episodes += anime.num_episodes;
         break;
       case "tv":
         types.plan_to_watch.tv++;
-        // types.plan_to_watch.tv_episodes += anime.num_episodes;
         break;
       case "special":
         types.plan_to_watch.special++;
-        // types.plan_to_watch.special_episodes += anime.num_episodes;
         break;
       case "ona":
         types.plan_to_watch.ona++;
-        // types.plan_to_watch.ona_episodes += anime.num_episodes;
+        break;
+      case "music":
+        types.plan_to_watch.music++;
         break;
     }
   }
 
   // oh lord this is tedious...
-  types.total_watched = types.completed.tv_episodes + types.completed.special_episodes + types.completed.ona_episodes
-    + types.completed.ova_episodes + types.completed.movies + types.watching.tv_episodes_watched + types.watching.special_episodes_watched
-    + types.watching.ona_episodes_watched + types.watching.ova_episodes_watched + types.watching.movies_watched + types.on_hold.tv_episodes_watched
-    + types.on_hold.special_episodes_watched + types.on_hold.ona_episodes_watched + types.on_hold.ova_episodes_watched + types.on_hold.movies_watched
-    + types.dropped.tv_episodes_watched + types.dropped.special_episodes_watched + types.dropped.ona_episodes_watched + types.dropped.ova_episodes_watched
-    + types.dropped.movies_watched;
+  types.total_watched = types.completed.tv_episodes + types.completed.special_episodes + types.completed.ona_episodes + types.completed.ova_episodes
+    + types.completed.movie_episodes + types.completed.music_episodes + types.watching.tv_episodes_watched + types.watching.special_episodes_watched
+    + types.watching.movies_watched + types.watching.ona_episodes_watched + types.watching.ova_episodes_watched + types.watching.music_episodes_watched
+    + types.on_hold.tv_episodes_watched + types.on_hold.special_episodes_watched + types.on_hold.ona_episodes_watched + types.on_hold.ova_episodes_watched
+    + types.on_hold.movies_watched + types.on_hold.music_episodes_watched + types.dropped.tv_episodes_watched + types.dropped.special_episodes_watched
+    + types.dropped.ona_episodes_watched + types.dropped.ova_episodes_watched + types.dropped.movies_watched + types.on_hold.music_episodes_watched;
 
   return types;
 }
@@ -558,7 +579,7 @@ function mostWatchedStudios(data) {
 
     let animeWatchedTotal = anime.my_list_status.num_episodes_watched * anime.average_episode_duration;
 
-    // There can be more than one studio per anime, ie: Franxx has A-1, Trigger, and Cloverworks
+    // There can be more than one studio per anime, ie: Franxx has A-1, Trigger, and CloverWorks
     for (let j = 0; j < anime.studios.length; j++) {
       let studio = anime.studios[j];
 
@@ -619,7 +640,9 @@ function calculateTimeWatched(data, types) {
     ona: 0,
     average_ona: 0,
     special: 0,
-    average_special: 0
+    average_special: 0,
+    music: 0,
+    average_music: 0,
   };
 
   let totalWatchTime = 0;
@@ -649,6 +672,9 @@ function calculateTimeWatched(data, types) {
       case "ona":
         watchTypes.ona += animeWatchedTotal;
         break;
+      case "music":
+        watchTypes.music += animeWatchedTotal;
+        break;
     }
   }
 
@@ -658,6 +684,7 @@ function calculateTimeWatched(data, types) {
   watchTypes.average_tv = watchTypes.tv / (types.completed.tv_episodes + types.dropped.tv_episodes_watched + types.on_hold.tv_episodes_watched + types.watching.tv_episodes_watched);
   watchTypes.average_special = watchTypes.special / (types.completed.special_episodes + types.dropped.special_episodes_watched + types.on_hold.special_episodes_watched + types.watching.special_episodes_watched);
   watchTypes.average_ona = watchTypes.ona / (types.completed.ona_episodes + types.dropped.ona_episodes_watched + types.on_hold.ona_episodes_watched + types.watching.ona_episodes_watched);
+  watchTypes.average_music = watchTypes.music / (types.completed.music_episodes + types.dropped.music_episodes_watched + types.on_hold.music_episodes_watched + types.watching.music_episodes_watched)
 
   return {
     totalWatchTime,

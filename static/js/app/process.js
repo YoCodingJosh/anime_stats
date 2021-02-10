@@ -221,7 +221,7 @@ function buildMostObscureAnime(data) {
 }
 
 function buildMostFamousAnime(data) {
-  var top_ten = data.stats.obscure.slice(Math.max(data.stats.obscure.length - 10, 0));
+  var top_ten = data.stats.obscure.slice(Math.max(data.stats.obscure.length - 10, 0)).reverse();
 
   console.log(top_ten);
 }

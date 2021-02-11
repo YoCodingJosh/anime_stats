@@ -175,6 +175,7 @@ function buildAnimeTypes(data) {
         planToWatchData,
       ],
       type: 'bar',
+      order: null,
       groups: [
         ['Watching', 'Completed', 'Dropped', 'On Hold', 'Plan to Watch']
       ]
@@ -208,7 +209,10 @@ function buildAnimeTypes(data) {
       });
     } else {
       chart.load({
-        unload: 'Plan to Watch'
+        unload: 'Plan to Watch',
+        groups: [
+          ['Watching', 'Completed', 'Dropped', 'On Hold']
+        ]
       })
     }
   })

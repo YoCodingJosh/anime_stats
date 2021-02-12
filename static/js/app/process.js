@@ -220,14 +220,49 @@ function buildAnimeTypes(data) {
 
 function buildMostObscureAnime(data) {
   var top_ten = data.stats.obscure.slice(0, 10);
+  var rawData = data.rawData.watching.concat(data.rawData.completed).concat(data.rawData.dropped).concat(data.rawData.on_hold);
 
-  console.log(top_ten);
+  var anime = [];
+  for (var i = 0; i < top_ten.length; i++) {
+    const ttAnime = top_ten[i];
+
+    for (var j = 0; j < rawData.length; j++) {
+      const animeNode = rawData[j].node;
+
+      if (ttAnime.id === animeNode.id) {
+        var data = animeNode.data;
+
+        // Make it easier to extract!
+        data.num_users = ttAnime.num_users;
+
+        anime.push(data);
+        break;
+      }
+    }
+  }
 }
 
 function buildMostFamousAnime(data) {
   var top_ten = data.stats.obscure.slice(Math.max(data.stats.obscure.length - 10, 0)).reverse();
 
-  console.log(top_ten);
+  var anime = [];
+  for (var i = 0; i < top_ten.length; i++) {
+    const ttAnime = top_ten[i];
+
+    for (var j = 0; j < rawData.length; j++) {
+      const animeNode = rawData[j].node;
+
+      if (ttAnime.id === animeNode.id) {
+        var data = animeNode.data;
+
+        // Make it easier to extract!
+        data.num_users = ttAnime.num_users;
+
+        anime.push(data);
+        break;
+      }
+    }
+  }
 }
 
 function finishProcessing(data) {

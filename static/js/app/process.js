@@ -249,8 +249,8 @@ function buildMostFamousAnime(data) {
   for (var i = 0; i < top_ten.length; i++) {
     const ttAnime = top_ten[i];
 
-    for (var j = 0; j < rawData.length; j++) {
-      const animeNode = rawData[j].node;
+    for (var j = 0; j < data.rawData.length; j++) {
+      const animeNode = data.rawData[j].node;
 
       if (ttAnime.id === animeNode.id) {
         var data = animeNode.data;

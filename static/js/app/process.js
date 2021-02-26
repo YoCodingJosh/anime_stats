@@ -143,8 +143,10 @@ function buildAnimeWatchTime(data) {
     $("#daysText").text(`${numDays}`);
     $("#daysLabel").text(`day${numDays === 1 ? "" : "s"}`);
 
-    $("#daysCombinedText").text(`${(watchSeconds / MINUTE_IN_SECONDS / HOUR_IN_MINUTES / DAY_IN_HOURS).toFixed(3)}`);
-    $("#daysCombinedLabel").text(`day${numDays === 1 ? "" : "s"}`);
+    var combinedDays = (watchSeconds / MINUTE_IN_SECONDS / HOUR_IN_MINUTES / DAY_IN_HOURS);
+
+    $("#daysCombinedText").text(`${combinedDays.toFixed(3)}`);
+    $("#daysCombinedLabel").text(`day${combinedDays === 1 ? "" : "s"}`);
   }
 
   if (!noHours) {

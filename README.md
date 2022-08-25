@@ -1,9 +1,9 @@
 # CodingJosh's Anime Stats
 
 ### Links
-* Staging Link: http://animestats-staging.codingjosh.com/
+* Staging Link: ~~http://animestats-staging.codingjosh.com/~~
 * Production Link: http://animestats.codingjosh.com/
 
-please note that the staging server goes to sleep after 30 minutes of inactivity and production is not live yet
+staging server is no longer available because I don't feel like paying lmao, there is no prod server haha
 
 documentation is coming soon for reals

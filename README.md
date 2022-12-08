@@ -8,4 +8,4 @@ staging server is no longer available because I don't feel like paying lmao, the
 
 documentation is coming soon for reals
 
-Update (06 September 2022): I'm going to start rewriting this and use AWS Lambda with a static frontend.
+Update (7 December 2022): *slowly* working on a rails version. check it out on the `ruby-rewrite` branch!

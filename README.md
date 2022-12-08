@@ -1,11 +1,24 @@
-# CodingJosh's Anime Stats
+# README
 
-### Links
-* Staging Link: ~~http://animestats-staging.codingjosh.com/~~
-* Production Link: http://animestats.codingjosh.com/
+This README would normally document whatever steps are necessary to get the
+application up and running.
 
-staging server is no longer available because I don't feel like paying lmao, there is no prod server haha
+Things you may want to cover:
 
-documentation is coming soon for reals
+* Ruby version
 
-Update (06 September 2022): I'm going to start rewriting this and use AWS Lambda with a static frontend.
+* System dependencies
+
+* Configuration
+
+* Database creation
+
+* Database initialization
+
+* How to run the test suite
+
+* Services (job queues, cache servers, search engines, etc.)
+
+* Deployment instructions
+
+* ...
